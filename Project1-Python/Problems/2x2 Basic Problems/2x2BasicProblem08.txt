@@ -1,0 +1,83 @@
+2x2 Basic Problem 08
+2x2
+2
+A
+	Z
+		shape:square
+		angle:0
+		fill:no
+	Y
+		shape:plus
+		angle:0
+		fill:yes
+		inside:Z
+B
+	Z
+		shape:square
+		angle:45
+		fill:no
+	Y
+		shape:plus
+		angle:0
+		fill:yes
+		inside:Z
+C
+	Z
+		shape:square
+		angle:45
+		fill:no
+	Y
+		shape:plus
+		angle:45
+		fill:yes
+		inside:Z
+1
+	Z
+		shape:square
+		angle:0
+		fill:no
+	Y
+		shape:plus
+		angle:0
+		fill:yes
+		inside:Z
+2
+	Z
+		shape:square
+		angle:0
+		fill:no
+	Y
+		shape:plus
+		angle:45
+		fill:yes
+		inside:Z
+3
+	Z
+		shape:square
+		angle:0
+		fill:no
+4
+	Z
+		shape:square
+		angle:45
+		fill:no
+	Y
+		shape:plus
+		angle:0
+		fill:yes
+		inside:Z
+5
+	Z
+		shape:square
+		angle:45
+		fill:no
+	Y
+		shape:plus
+		angle:45
+		fill:yes
+		inside:Z
+6
+	Z
+		shape:square
+		angle:45
+		fill:no

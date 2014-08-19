@@ -1,0 +1,48 @@
+2x2 Basic Problem 17
+2x2
+6
+A
+	Z
+		shape:Pac-Man
+		angle:315
+		fill:no
+B
+	Z
+		shape:Pac-Man
+		angle:225
+		fill:no
+C
+	Z
+		shape:Pac-Man
+		angle:45
+		fill:yrd
+1
+	Z
+		shape:Pac-Man
+		angle:45
+		fill:no
+2
+	Z
+		shape:Pac-Man
+		angle:225
+		fill:no
+3
+	Z
+		shape:Pac-Man
+		angle:135
+		fill:no
+4
+	Z
+		shape:Pac-Man
+		angle:45
+		fill:yes
+5
+	Z
+		shape:Pac-Man
+		angle:225
+		fill:yes
+6
+	Z
+		shape:Pac-Man
+		angle:135
+		fill:yes

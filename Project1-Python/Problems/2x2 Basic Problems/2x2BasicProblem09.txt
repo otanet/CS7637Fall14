@@ -1,0 +1,67 @@
+2x2 Basic Problem 09
+2x2
+6
+A
+	Z
+		shape:circle
+		size:large
+	Y
+		shape:circle
+		size:medium
+		inside:Z
+	X
+		shape:circle
+		size:small
+		inside:Z,Y
+B
+	Z
+		shape:circle
+		size:large
+	Y
+		shape:circle
+		size:medium
+		inside:Z
+C
+	Z
+		shape:circle
+		size:large
+	Y
+		shape:circle
+		size:small
+		inside:Z
+1
+	Z
+		shape:circle
+		size:medium
+	Y
+		shape:circle
+		size:small
+		inside:Z
+2
+	Z
+		shape:circle
+		size:large
+	Y
+		shape:circle
+		size:small
+		inside:Z
+3
+	Z
+		shape:circle
+		size:large
+	Y
+		shape:circle
+		size:medium
+		inside:Z
+4
+	Z
+		shape:circle
+		size:small
+5
+	Z
+		shape:circle
+		size:medium
+6
+	Z
+		shape:circle
+		size:large

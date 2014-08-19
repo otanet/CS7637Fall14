@@ -1,0 +1,93 @@
+2x2 Basic Problem 03
+2x2
+1
+A
+	Z
+		shape:square
+		angle:45
+		fill:yes
+	Y
+		shape:circle
+		fill:no
+		overlaps:Z
+		angle:0
+B
+	Z
+		shape:square
+		angle:0
+		fill:yes
+	Y
+		shape:circle
+		fill:no
+		overlaps:Z
+		angle:0
+C
+	Z
+		shape:circle
+		fill:yes
+		angle:0
+	Y
+		shape:triangle
+		angle:0
+		fill:no
+		overlaps:Z
+1
+	Z
+		shape:circle
+		fill:yes
+		angle:0
+	Y
+		shape:triangle
+		angle:0
+		fill:no
+		overlaps:Z
+2
+	Z
+		shape:square
+		fill:yes
+		angle:0
+	Y
+		shape:circle
+		fill:no
+		angle:0
+		overlaps:Z
+3
+	Z
+		shape:circle
+		fill:yes
+		angle:0
+	Y
+		shape:Pac-Man
+		fill:no
+		angle:225
+		overlaps:Z
+4
+	Z
+		shape:circle
+		fill:yes
+		angle:0
+	Y
+		shape:circle
+		fill:no
+		angle:0
+		overlaps:Z
+5
+	Z
+		shape:circle
+		fill:yes
+		angle:0
+	Y
+		shape:square
+		fill:no
+		angle:0
+		overlaps:Z
+6
+	Z
+		shape:square
+		fill:yes
+		angle:0
+	Y
+		shape:Pac-Man
+		fill:no
+		angle:315
+		overlaps:Z

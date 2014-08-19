@@ -1,0 +1,84 @@
+2x2 Basic Problem 18
+2x2
+2
+A
+	Z
+		shape:circle
+		fill:yes
+	Y
+		shape:Pac-Man
+		fill:no
+		angle:45
+		inside:Z
+B
+	Z
+		shape:circle
+		fill:yes
+	Y
+		shape:Pac-Man
+		fill:no
+		angle:135
+		inside:Z
+C
+	Z
+		shape:circle
+		fill:no
+	Y
+		shape:Pac-Man
+		fill:yes
+		angle:45
+		inside:Z
+1
+	Z
+		shape:circle
+		fill:no
+	Y
+		shape:Pac-Man
+		fill:yes
+		angle:45
+		inside:Z
+2
+	Z
+		shape:circle
+		fill:no
+	Y
+		shape:Pac-Man
+		fill:yes
+		angle:135
+		inside:Z
+3
+	Z
+		shape:circle
+		fill:no
+	Y
+		shape:Pac-Man
+		fill:yes
+		angle:225
+		inside:Z
+4
+	Z
+		shape:circle
+		fill:yes
+	Y
+		shape:Pac-Man
+		fill:no
+		angle:45
+		inside:Z
+5
+	Z
+		shape:circle
+		fill:yes
+	Y
+		shape:Pac-Man
+		fill:no
+		angle:135
+		inside:Z
+6
+	Z
+		shape:circle
+		fill:yes
+	Y
+		shape:Pac-Man
+		fill:no
+		angle:225
+		inside:Z

@@ -1,0 +1,93 @@
+2x2 Basic Problem 06
+2x2
+3
+A
+	Z
+		shape:triangle
+		fill:yes
+		angle:0
+	Y
+		shape:triangle
+		fill:no
+		above:Z
+		angle:180
+B
+	Z
+		shape:triangle
+		fill:no
+		angle:270
+	Y
+		shape:triangle
+		fill:no
+		above:Z
+		angle:90
+C
+	Z
+		shape:triangle
+		fill:no
+		angle:270
+	Y
+		shape:triangle
+		fill:yes
+		above:Z
+		angle:90
+1
+	Z
+		shape:triangle
+		fill:yes
+		angle:0
+	Y
+		shape:triangle
+		fill:no
+		above:Z
+		angle:180
+2
+	Z
+		shape:triangle
+		fill:no
+		angle:270
+	Y
+		shape:triangle
+		fill:yes
+		above:Z
+		angle:90
+3
+	Z
+		shape:triangle
+		fill:no
+		angle:0
+	Y
+		shape:triangle
+		fill:no
+		above:Z
+		angle:180
+4
+	Z
+		shape:triangle
+		fill:yes
+		angle:270
+	Y
+		shape:triangle
+		fill:no
+		above:Z
+		angle:90
+5
+	Z
+		shape:triangle
+		fill:yes
+		angle:180
+	Y
+		shape:triangle
+		fill:no
+		above:Z
+		angle:0
+6
+	Z
+		shape:triangle
+		fill:no
+		angle:270
+	Y
+		shape:triangle
+		fill:no
+		above:Z
+		angle:90

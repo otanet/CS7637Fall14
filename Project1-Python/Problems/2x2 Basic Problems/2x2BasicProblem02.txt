@@ -1,0 +1,41 @@
+2x2 Basic Problem 02
+2x2
+3
+A
+	Z
+		shape:square
+		fill:yes
+B
+	Z
+		shape:square
+		fill:no
+C
+	Z
+		shape:circle
+		fill:yes
+1
+	Z
+		shape:square
+		fill:no
+2
+	Z
+		shape:square
+		fill:yes
+3
+	Z
+		shape:circle
+		fill:no
+4
+	Z
+		shape:square
+		fill:yes
+		angle:45
+5
+	Z
+		shape:circle
+		fill:yes
+6
+	Z
+		shape:square
+		fill:no
+		angle:45

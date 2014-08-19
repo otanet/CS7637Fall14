@@ -1,0 +1,59 @@
+2x2 Basic Problem 13
+2x2
+5
+A
+	Z
+		shape:circle
+		fill:no
+B
+	Z
+		shape:square
+		fill:no
+C
+	Z
+		shape:circle
+		fill:no
+		left-of:Y
+	Y
+		shape:circle
+		fill:no
+1
+	Z
+		shape:circle
+		fill:no
+2
+	Z
+		shape:circle
+		fill:no
+		left-of:Y
+	Y
+		shape:circle
+		fill:no
+3
+	Z
+		shape:circle
+		fill:no
+		left-of:Y
+	Y
+		shape:square
+		fill:no
+4
+	Z
+		shape:square
+		fill:no
+5
+	Z
+		shape:square
+		fill:no
+		left-of:Y
+	Y
+		shape:square
+		fill:no
+6
+	Z
+		shape:square
+		fill:no
+		left-of:Y
+	Y
+		shape:circle
+		fill:no

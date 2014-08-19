@@ -1,0 +1,48 @@
+2x2 Basic Problem 12
+2x2
+3
+A
+	Z
+		shape:half-arrow
+		angle:0
+		vertical-flip:no
+B
+	Z
+		shape:half-arrow
+		angle:180
+		vertical-flip:yes
+C
+	Z
+		shape:half-arrow
+		angle:0
+		vertical-flip:yes
+1
+	Z
+		shape:half-arrow
+		angle:0
+		vertical-flip:no
+2
+	Z
+		shape:half-arrow
+		angle:0
+		vertical-flip:no
+3
+	Z
+		shape:half-arrow
+		angle:270
+		vertical-flip:yes
+4
+	Z
+		shape:half-arrow
+		angle:180
+		vertical-flip:yes
+5
+	Z
+		shape:half-arrow
+		angle:180
+		vertical-flip:no
+6
+	Z
+		shape:half-arrow
+		angle:270
+		vertical-flip:no
