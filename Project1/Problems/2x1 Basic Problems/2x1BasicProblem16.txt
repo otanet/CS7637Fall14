@@ -7,7 +7,7 @@ A
 		size:large
 	Y
 		shape:circle
-		size:large
+		size:small
 		inside:X
 B
 	X

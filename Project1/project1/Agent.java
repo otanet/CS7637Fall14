@@ -1,4 +1,3 @@
-//It made it. twice.
 package project1;
 
 /**

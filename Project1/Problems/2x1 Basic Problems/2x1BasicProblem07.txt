@@ -121,7 +121,7 @@ C
 		angle:180
 	Y
 		shape:square
-		size:big
+		size:large
 		fill:no
 		angle:0
 		above:Z
