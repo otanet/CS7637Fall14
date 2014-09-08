@@ -94,7 +94,8 @@ public class Agent {
     			System.out.println(temp.getDiffArray().get(x));
     		}
     	}
-    	
+    
+    //Now that the difference array is built, compare them and make a guess at the answer
     	for(int guesses = 0; guesses < 6; guesses++)
     	{
     		if(goal.getDiffArray().equals(transformations.get(guesses).getDiffArray())==true)
@@ -105,6 +106,7 @@ public class Agent {
     	
         index = index + 1;
         
+    //Print the answer in the console to stroke the ego.
         String correctAnswer = problem.checkAnswer(answer);
         if (answer.equals(correctAnswer)==true)
         {
