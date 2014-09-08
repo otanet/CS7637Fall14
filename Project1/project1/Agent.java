@@ -1,5 +1,8 @@
 package project1;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 /**
  * Your Agent for solving Raven's Progressive Matrices. You MUST modify this
  * file.
@@ -22,6 +25,8 @@ public class Agent {
      * main().
      * 
      */
+	Integer index = 1;
+	
     public Agent() {
         
     }
@@ -51,6 +56,34 @@ public class Agent {
      * @return your Agent's answer to this problem
      */
     public String Solve(RavensProblem problem) {
-        return "1";
+        //Tell console what you're doing
+    	System.out.println("Agent.java iteration = " + index + " Problem Name = " + problem.getName() + "");
+    	
+    	//Tell console what pieces you're working with
+    	HashMap<String, RavensFigure> figures = problem.getFigures();
+    	RavensFigure A = figures.get("A");
+    	System.out.println("Name = " + A.getName() + " number of objects inside frame = " + A.getObjects().size() );
+    	Transformation goal = new Transformation();
+    	
+    	goal.figureTransformation(figures.get("A"),figures.get("B"));
+    	
+        
+        
+        /*
+        HashMap<String, RavensFigure> test = problem.getFigures();
+        RavensFigure A = test.get("A");
+        ArrayList<RavensObject> object = A.getObjects();
+        RavensObject thingy = object.get(0);
+        String thingyName= thingy.getName();
+        System.out.println(thingyName);
+        
+        System.out.println(name);
+        */
+    	
+        index = index + 1;
+        		
+        String answer="1";
+        return answer;
     }
+
 }
