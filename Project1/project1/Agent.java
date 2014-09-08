@@ -63,9 +63,10 @@ public class Agent {
     	HashMap<String, RavensFigure> figures = problem.getFigures();
     	RavensFigure A = figures.get("A");
     	System.out.println("Name = " + A.getName() + " number of objects inside frame = " + A.getObjects().size() );
-    	Transformation goal = new Transformation();
     	
-    	goal.figureTransformation(figures.get("A"),figures.get("B"));
+    	//Transformation goal = new Transformation();
+    	
+    	//goal.figureTransformation(figures.get("A"),figures.get("B"));
     	
         
         

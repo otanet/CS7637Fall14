@@ -3,21 +3,23 @@ package project1;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class Transformation {
+public class ObjectTrans {
     String name1; //name of the first figure x,y,z
     String name2; //name of the second figure x,y,z, etc
-    ArrayList<TransAttribute> attributes1;  //list of the attributes for first figure
-    ArrayList<TransAttribute> attributes2;  //list of the attributes for second figure
+    ArrayList<RavensObject> attributes1;  //list of the attributes for first figure
+    ArrayList<RavensObject> attributes2;  //list of the attributes for second figure
     //ArrayList<TransAttribute> same; //array that tells when
 
     
     
 
-    public void figureTransformation(RavensObject object1, RavensObject object2) 
+    public ObjectTrans(RavensObject object1, RavensObject object2) 
     {
         this.name1 = object1.getName();
         this.name2 = object2.getName();
-        //this.attributes
+        this.attributes1=new ArrayList<>();
+        this.attributes2=new ArrayList<>();
+        
         
     }
 
