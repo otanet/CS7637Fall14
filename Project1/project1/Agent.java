@@ -56,18 +56,107 @@ public class Agent {
      * @return your Agent's answer to this problem
      */
     public String Solve(RavensProblem problem) {
-        //Tell console what you're doing
+        //ArrayList<ObjectTrans>
+
+    	//Variables
+    	String answer="0";
+    	//Tell console what you're doing
     	System.out.println("Agent.java iteration = " + index + " Problem Name = " + problem.getName() + "");
     	
     	//Tell console what pieces you're working with
     	HashMap<String, RavensFigure> figures = problem.getFigures();
     	RavensFigure A = figures.get("A");
-    	System.out.println("Name = " + A.getName() + " number of objects inside frame = " + A.getObjects().size() );
+    	//System.out.println("Name = " + A.getName() + " number of objects inside frame = " + A.getObjects().size() );
+    	RavensFigure B = figures.get("B");
     	
-    	//Transformation goal = new Transformation();
+    	ObjectTrans goal = new ObjectTrans(A.getObjects().get(0),B.getObjects().get(0));
+    	System.out.println("-------GOAL-------");
+    	for(int x=0; x<goal.getDiffArray().size(); x++)
+    	{
+    		System.out.println(goal.getDiffArray().get(x));
+    	}
     	
+    	RavensFigure C = figures.get("C");
+    	
+    	RavensFigure oneFigure = figures.get("1");
+    	ObjectTrans first = new ObjectTrans(C.getObjects().get(0),oneFigure.getObjects().get(0));
+    	System.out.println("-------First Guess-------");
+    	for(int x=0; x<first.getDiffArray().size(); x++)
+    	{
+    		System.out.println(first.getDiffArray().get(x));
+    	}
+    	
+    	
+    	RavensFigure twoFigure = figures.get("2");
+    	ObjectTrans second = new ObjectTrans(C.getObjects().get(0),twoFigure.getObjects().get(0));
+    	System.out.println("-------Second Guess-------");
+    	for(int x=0; x<second.getDiffArray().size(); x++)
+    	{
+    		System.out.println(second.getDiffArray().get(x));
+    	}
+    	
+    	RavensFigure threeFigure = figures.get("3");
+    	ObjectTrans third = new ObjectTrans(C.getObjects().get(0),threeFigure.getObjects().get(0));
+    	System.out.println("-------Third Guess-------");
+    	for(int x=0; x<third.getDiffArray().size(); x++)
+    	{
+    		System.out.println(third.getDiffArray().get(x));
+    	}
+    	
+    	RavensFigure fourFigure = figures.get("4");
+    	ObjectTrans fourth = new ObjectTrans(C.getObjects().get(0),fourFigure.getObjects().get(0));
+    	System.out.println("-------Fourth Guess-------");
+    	for(int x=0; x<fourth.getDiffArray().size(); x++)
+    	{
+    		System.out.println(fourth.getDiffArray().get(x));
+    	}
+    	
+    	RavensFigure fiveFigure = figures.get("5");
+    	ObjectTrans fifth = new ObjectTrans(C.getObjects().get(0),fiveFigure.getObjects().get(0));
+    	System.out.println("-------Fifth Guess-------");
+    	for(int x=0; x<fifth.getDiffArray().size(); x++)
+    	{
+    		System.out.println(fifth.getDiffArray().get(x));
+    	}
+    	
+    	RavensFigure sixFigure = figures.get("6");
+    	ObjectTrans sixth = new ObjectTrans(C.getObjects().get(0),sixFigure.getObjects().get(0));
+    	System.out.println("-------Sixth Guess-------");
+    	for(int x=0; x<sixth.getDiffArray().size(); x++)
+    	{
+    		System.out.println(sixth.getDiffArray().get(x));
+    	}
+    	
+    	if (goal.getDiffArray().equals(first.getDiffArray())==true)
+    	{
+    		answer = "1";
+    	}
+    	
+    	else if (goal.getDiffArray().equals(second.getDiffArray())==true)
+    	{
+    		answer = "2";
+    	}
+    	
+    	else if (goal.getDiffArray().equals(third.getDiffArray())==true)
+    	{
+    		answer = "3";
+    	}
+    	else if (goal.getDiffArray().equals(fourth.getDiffArray())==true)
+    	{
+    		answer = "4";
+    	}
+    	
+    	else if (goal.getDiffArray().equals(fifth.getDiffArray())==true)
+    	{
+    		answer = "5";
+    	}
+    	
+    	else if (goal.getDiffArray().equals(sixth.getDiffArray())==true)
+    	{
+    		answer = "6";
+    	}
     	//goal.figureTransformation(figures.get("A"),figures.get("B"));
-    	
+
         
         
         /*
@@ -82,9 +171,18 @@ public class Agent {
         */
     	
         index = index + 1;
-        		
-        String answer="0";
+        
+        String correctAnswer = problem.checkAnswer(answer);
+        if (answer.equals(correctAnswer)==true)
+        {
+        	System.out.println("CORRECT!");
+        }
+        else
+        {
+	        System.out.println("DAMN!");
+        }
         return answer;
+        
     }
 
 }

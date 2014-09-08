@@ -6,24 +6,50 @@ import java.util.HashMap;
 public class ObjectTrans {
     String name1; //name of the first figure x,y,z
     String name2; //name of the second figure x,y,z, etc
-    ArrayList<RavensObject> attributes1;  //list of the attributes for first figure
-    ArrayList<RavensObject> attributes2;  //list of the attributes for second figure
-    //ArrayList<TransAttribute> same; //array that tells when
-
-    
+    ArrayList<RavensAttribute> attributes1;  //list of the attributes for first figure
+    ArrayList<RavensAttribute> attributes2;  //list of the attributes for second figure
+    ArrayList<String> differences; //actual differences array?
+    //differences array looks something like this:
+    //<same,same,attribute1,attribute2,same,same,dne,dne>
     
 
     public ObjectTrans(RavensObject object1, RavensObject object2) 
     {
-        this.name1 = object1.getName();
-        this.name2 = object2.getName();
-        this.attributes1=new ArrayList<>();
-        this.attributes2=new ArrayList<>();
-        
+        name1 = object1.getName();
+        name2 = object2.getName();
+        attributes1 = object1.getAttributes();
+        attributes2 = object2.getAttributes();
+        differences = new ArrayList<>();
+        setDiffArray();
         
     }
 
+    public void setDiffArray()
+    {
+    	for(int x = 0; x < attributes1.size(); x = x+1)
+    	{
 
+    		if (attributes1.get(x).getName().equals(attributes2.get(x).getName()) == true )
+    		{
+    			if(attributes1.get(x).getValue().equals(attributes2.get(x).getValue()) == true)
+    			{
+    				differences.add("Same");
+    				differences.add("Same");
+    			}
+    			else
+    			{
+    	    		//ArrayList<String> temp = new ArrayList();
+    	    		differences.add(attributes1.get(x).getValue());
+    	    		differences.add(attributes2.get(x).getValue());
+    	    		//differences = temp;
+    	    		
+    	    		
+    				// WLT - why doesn't this work???differences.add(attname1);
+    			}
+    		}
+    	}
+    }
+    
     public String getFrom() 
     {
         return name1;
@@ -34,18 +60,18 @@ public class ObjectTrans {
         return name1;
     }
 
-    public ArrayList<TransAttribute> getAttributeFrom() 
+    public ArrayList<RavensAttribute> getAttributeFrom() 
     {
         return attributes1;
     }
     
-    public ArrayList<TransAttribute> getAttributeto() 
+    public ArrayList<RavensAttribute> getAttributeTo() 
     {
         return attributes2;
     }
-    
-    public void setDifferences(RavensObject object1, RavensObject object2)
+    public ArrayList<String> getDiffArray()
     {
-    	
+    	return differences;
     }
+
 }
