@@ -82,7 +82,7 @@ public class Agent {
     	
         index = index + 1;
         		
-        String answer="1";
+        String answer="0";
         return answer;
     }
 

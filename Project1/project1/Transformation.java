@@ -52,12 +52,12 @@ public class Transformation {
     public void setDifferences(RavensObject object1, RavensObject object2)
     {
     	//The two objects names should be equal. (X compared to X, etc)
-    	if (this.objectFrom.getName().equals(this.objectTo.getName()))
-    	{
-    		String name = objectFigure.getObjects().g//get the attributes and put them in the the difference map.
+    	//if (this.objectFrom.getName().equals(this.objectTo.getName()))
+    	//{
+    	//	String name = objectFigure.getObjects().g//get the attributes and put them in the the difference map.
 
     		
-    	}
+    	//}
     	
     	
     }
