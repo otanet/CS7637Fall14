@@ -4,46 +4,65 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Transformation {
-    String name1; //name of the first figure x,y,z
-    String name2; //name of the second figure x,y,z, etc
-    ArrayList<TransAttribute> attributes1;  //list of the attributes for first figure
-    ArrayList<TransAttribute> attributes2;  //list of the attributes for second figure
-    //ArrayList<TransAttribute> same; //array that tells when
-
+    Integer numberObjectsFrom;
+    Integer numberObjectsTo;
+    Integer maxObjects;
+    Integer minObjects;
+    RavensFigure figureFrom;
+    RavensFigure figureTo;
+    ArrayList<ObjectTrans> AllTrans;
     
-    
-
-    public void figureTransformation(RavensObject object1, RavensObject object2) 
+    public Transformation(RavensFigure figure1, RavensFigure figure2) 
     {
-        this.name1 = object1.getName();
-        this.name2 = object2.getName();
-        //this.attributes
+    	numberObjectsFrom = figure1.getObjects().size();
+    	numberObjectsTo = figure2.getObjects().size();
+    	maxObjects = (numberObjectsFrom > numberObjectsTo) ? numberObjectsFrom : numberObjectsTo;
+    	minObjects = (numberObjectsFrom < numberObjectsTo) ? numberObjectsFrom : numberObjectsTo;
+    	figureFrom = figure1;
+    	figureTo = figure2;
+    	AllTrans = new ArrayList<>();
+    	setTrans();
+    	
+        //goal = new ObjectTrans(A.getObjects().get(0),B.getObjects().get(0));
         
     }
 
 
     public String getFrom() 
     {
-        return name1;
+        return "0";
     }
     
     public String getTo() 
     {
-        return name1;
+    	return "0";
     }
 
-    public ArrayList<TransAttribute> getAttributeFrom() 
-    {
-        return attributes1;
-    }
     
-    public ArrayList<TransAttribute> getAttributeto() 
+    public void setTrans()
     {
-        return attributes2;
-    }
-    
-    public void setDifferences(RavensObject object1, RavensObject object2)
-    {
+    	for(int x = 0; x<maxObjects; x++)
     	
+    	if (x < minObjects)
+    	{
+    		ObjectTrans temp = new ObjectTrans(figureFrom.getObjects().get(x),figureTo.getObjects().get(x)); 
+    		AllTrans.add(temp);
+    	}
+    	else if(numberObjectsFrom < maxObjects)
+    	{
+    		RavensObject emptyObject = new RavensObject("dne");
+    		ObjectTrans temp1 = new ObjectTrans(emptyObject,figureTo.getObjects().get(x));
+    	}
+    	else if(numberObjectsTo < maxObjects)
+    	{
+    		RavensObject emptyObject = new RavensObject("dne");
+    		ObjectTrans temp1 = new ObjectTrans(figureFrom.getObjects().get(x),emptyObject);
+    	}
     }
+    
+    public ArrayList<ObjectTrans> getTrans()
+    {
+    	return AllTrans;
+    }
+    
 }

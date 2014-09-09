@@ -21,31 +21,37 @@ public class ObjectTrans {
         attributes2 = object2.getAttributes();
         differences = new ArrayList<>();
         setDiffArray();
-        
     }
 
     public void setDiffArray()
     {
-    	for(int x = 0; x < attributes1.size(); x = x+1)
+    	for(int x = 0; x < attributes1.size(); x++)
     	{
-
-    		if (attributes1.get(x).getName().equals(attributes2.get(x).getName()) == true )
+    		if (!name1.equals("dne") && !name2.equals("dne"))
     		{
-    			if(attributes1.get(x).getValue().equals(attributes2.get(x).getValue()) == true)
-    			{
-    				differences.add("Same");
-    				differences.add("Same");
-    			}
-    			else
-    			{
-    	    		//ArrayList<String> temp = new ArrayList();
-    	    		differences.add(attributes1.get(x).getValue());
-    	    		differences.add(attributes2.get(x).getValue());
-    	    		//differences = temp;
-    	    		
-    	    		
-    				// WLT - why doesn't this work???differences.add(attname1);
-    			}
+	    		if (attributes1.get(x).getName().equals(attributes2.get(x).getName()) == true )
+	    		{
+	    			if(attributes1.get(x).getValue().equals(attributes2.get(x).getValue()) == true)
+	    			{
+	    				differences.add("Same");
+	    				differences.add("Same");
+	    			}
+	    			else
+	    			{
+	    	    		differences.add(attributes1.get(x).getValue());
+	    	    		differences.add(attributes2.get(x).getValue());
+	    			}
+	    		}
+	    		else if(name1.equals("dne"))
+	    		{
+	    			differences.add("dne");
+	    			differences.add(attributes2.get(x).getValue());
+	    		}
+	    		else if(name2.equals("dne"))
+	    		{
+	    			differences.add(attributes1.get(x).getValue());
+	    			differences.add("dne");
+	    		}
     		}
     	}
     }

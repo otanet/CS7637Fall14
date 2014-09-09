@@ -58,8 +58,8 @@ public class Agent {
      */
     public String Solve(RavensProblem problem) {
         //Variables
-    	ArrayList<ObjectTrans> transformations = new ArrayList<>();
-    	ObjectTrans goal;
+    	ArrayList<Transformation> transformations = new ArrayList<>();
+    	Transformation goal;
     	String answer="0";
     	ArrayList<String> options = new ArrayList<String>(Arrays.asList("1","2","3","4","5","6"));
     	
@@ -68,27 +68,45 @@ public class Agent {
     //Tell console what you're doing
     	System.out.println("Agent.java iteration = " + index + " Problem Name = " + problem.getName() + "");
     	
-    //Get initial pieces and make the goal transformation difference array
+    //Get initial figures and make the goal transformation difference object
+    //At the end of this section, we will have 
+    // <Transforamtion> goal
+    //						<ArrayList>AllTrans
+    //									<ObjectTrans> objectTrans1
+    //									<ObjectTrans> objectTrans2
+    //									...
+    //where maxObjects is the maximum number of objects from both figures.
+    	
     	HashMap<String, RavensFigure> figures = problem.getFigures();
     	RavensFigure A = figures.get("A");
     	RavensFigure B = figures.get("B");
     	
-    	goal = new ObjectTrans(A.getObjects().get(0),B.getObjects().get(0));
+    	goal = new Transformation(A,B);
+    	ArrayList<ObjectTrans> temptransList = goal.getTrans();
+    	
+    	//Let's see if we got the right information. Print it to the screen.
     	System.out.println("-------GOAL-------");
-    	for(int x=0; x<goal.getDiffArray().size(); x++)
+    	for(int y=0; y< temptransList.size();y++)
     	{
-    		System.out.println(goal.getDiffArray().get(x));
+    		ObjectTrans workingObject = temptransList.get(y);
+    		
+    		for(int x=0; x<workingObject.getDiffArray().size(); x++)
+    		{
+    			System.out.println(workingObject.getDiffArray().get(x));
+    		}
     	}
     	
     //Get figure C and prep for looping through the 6 guesses.
     	RavensFigure C = figures.get("C");
     	
+    	Transformation temp1 = new Transformation(A,B);
+    	temptransList = temp1.getTrans();
+    	
     	for(int guesses = 0; guesses < 6; guesses++)
     	{
-    	//RavensFigure oneFigure = figures.get("1");
     	ObjectTrans temp = new ObjectTrans(C.getObjects().get(0),figures.get(options.get(guesses)).getObjects().get(0));
-    	transformations.add(temp);
-    	System.out.println("-------First Guess-------");
+    	transformations.add(temp1);
+    	System.out.println("-------Guess #"+ guesses + "------");
     	for(int x=0; x<temp.getDiffArray().size(); x++)
     		{
     			System.out.println(temp.getDiffArray().get(x));
@@ -98,9 +116,29 @@ public class Agent {
     //Now that the difference array is built, compare them and make a guess at the answer
     	for(int guesses = 0; guesses < 6; guesses++)
     	{
-    		if(goal.getDiffArray().equals(transformations.get(guesses).getDiffArray())==true)
+    		boolean match = false;
+    		ArrayList<Integer> check = new ArrayList<Integer>();
+    		Integer temp = 0;
+    		
+    		
+    		for(int x=0;x < goal.getTrans().size();x++)
     		{
-    			answer = options.get(guesses);
+    			if (goal.getTrans().get(x).getDiffArray().equals(transformations.get(guesses).getTrans().get(x).getDiffArray()))
+				{
+    				check.add(1);
+				}
+    			else
+    			{
+    				check.add(0);
+    			}
+    			for(int j=0; j < check.size(); j++)
+    			{
+    				temp = temp + check.indexOf(j);
+    			}
+    			if (temp == check.size())
+    			{
+    				answer = options.get(guesses);
+    			}
     		}
     	}
     	
@@ -116,8 +154,6 @@ public class Agent {
         {
 	        System.out.println("DAMN!");
         }
-        return answer;
-        
+        return answer;   
     }
-
 }
