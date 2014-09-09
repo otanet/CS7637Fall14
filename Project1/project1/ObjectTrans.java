@@ -42,17 +42,17 @@ public class ObjectTrans {
 	    	    		differences.add(attributes2.get(x).getValue());
 	    			}
 	    		}
-	    		else if(name1.equals("dne"))
-	    		{
-	    			differences.add("dne");
-	    			differences.add(attributes2.get(x).getValue());
-	    		}
-	    		else if(name2.equals("dne"))
-	    		{
-	    			differences.add(attributes1.get(x).getValue());
-	    			differences.add("dne");
-	    		}
     		}
+	    	else if(name1.equals("dne"))
+	   		{
+	   			differences.add("dne");
+	   			differences.add(attributes2.get(x).getValue());
+	    	}
+	    	else if(name2.equals("dne"))
+	   		{
+	    		differences.add(attributes1.get(x).getValue());
+	    		differences.add("dne");
+	   		}
     	}
     }
     

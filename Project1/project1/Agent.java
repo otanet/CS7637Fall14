@@ -98,49 +98,50 @@ public class Agent {
     	
     //Get figure C and prep for looping through the 6 guesses.
     	RavensFigure C = figures.get("C");
-    	
-    	Transformation temp1 = new Transformation(A,B);
-    	temptransList = temp1.getTrans();
-    	
-    	for(int guesses = 0; guesses < 6; guesses++)
+    	for(Integer guesses = 1; guesses < 7; guesses++)
     	{
-    	ObjectTrans temp = new ObjectTrans(C.getObjects().get(0),figures.get(options.get(guesses)).getObjects().get(0));
-    	transformations.add(temp1);
-    	System.out.println("-------Guess #"+ guesses + "------");
-    	for(int x=0; x<temp.getDiffArray().size(); x++)
+    		RavensFigure tempFigure = figures.get(guesses.toString());
+    		
+    		Transformation tempTrans = new Transformation(C, tempFigure);
+        	temptransList = tempTrans.getTrans();
+        	
+	    	//ObjectTrans temp = new ObjectTrans(C.getObjects().get(0),figures.get(options.get(guesses)).getObjects().get(0));
+	    	transformations.add(tempTrans);
+	    	
+	    	System.out.println("-------Guess #"+ guesses + "------");
+    	
+	    	
+    	for(int x=0; x<tempTrans.getTrans().size(); x++)
     		{
-    			System.out.println(temp.getDiffArray().get(x));
+    		for(int y=0;y<tempTrans.getTrans().get(x).getDiffArray().size();y++)
+    			System.out.println(tempTrans.getTrans().get(x).getDiffArray().get(y));
     		}
     	}
+    	
     
-    //Now that the difference array is built, compare them and make a guess at the answer
-    	for(int guesses = 0; guesses < 6; guesses++)
+    //Now that the difference array is built, compare them to the goal transformations
+    //and make a guess at the answer
+    	for(Integer guesses = 0; guesses < 6; guesses++)
     	{
-    		boolean match = false;
-    		ArrayList<Integer> check = new ArrayList<Integer>();
-    		Integer temp = 0;
-    		
-    		
-    		for(int x=0;x < goal.getTrans().size();x++)
+    		//number of object transformations
+    		Integer numObjects = goal.getTrans().size();
+    		Integer match = 0;
+    		for(Integer objects = 0; objects < numObjects; objects++)
     		{
-    			if (goal.getTrans().get(x).getDiffArray().equals(transformations.get(guesses).getTrans().get(x).getDiffArray()))
-				{
-    				check.add(1);
-				}
-    			else
+    			ArrayList<String> goalarray = goal.getTrans().get(objects).getDiffArray();
+    			ArrayList<String> guessarray = transformations.get(guesses).getTrans().get(objects).getDiffArray();
+    			if (goalarray.equals(guessarray))
     			{
-    				check.add(0);
-    			}
-    			for(int j=0; j < check.size(); j++)
-    			{
-    				temp = temp + check.indexOf(j);
-    			}
-    			if (temp == check.size())
-    			{
-    				answer = options.get(guesses);
+    				match = match + 1;
     			}
     		}
+    		if (match == numObjects)
+    		{
+    			Integer temp = guesses + 1;
+    			answer = temp.toString();
+    		}
     	}
+    	
     	
         index = index + 1;
         
