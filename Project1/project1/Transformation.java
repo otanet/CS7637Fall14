@@ -11,6 +11,7 @@ public class Transformation {
     RavensFigure figureFrom;
     RavensFigure figureTo;
     ArrayList<ObjectTrans> AllTrans;
+    ArrayList<String>flatTrans;
     
     public Transformation(RavensFigure figure1, RavensFigure figure2) 
     {
@@ -20,13 +21,26 @@ public class Transformation {
     	minObjects = (numberObjectsFrom < numberObjectsTo) ? numberObjectsFrom : numberObjectsTo;
     	figureFrom = figure1;
     	figureTo = figure2;
-    	AllTrans = new ArrayList<>();
+    	AllTrans = new ArrayList<ObjectTrans>();
+    	flatTrans = new ArrayList<String>();
     	setTrans();
+    	setFlatTrans();
     	
         //goal = new ObjectTrans(A.getObjects().get(0),B.getObjects().get(0));
         
     }
 
+    public void setFlatTrans()
+    {
+    for(int x = 0; x < AllTrans.size(); x++)
+    	{
+    		ArrayList<String> temp = AllTrans.get(x).getDiffArray();
+    		for(int y=0;y<temp.size(); y++)
+    		{
+    			flatTrans.add(temp.get(y));
+    		}
+    	}
+    }
 
     public String getFrom() 
     {
@@ -66,5 +80,11 @@ public class Transformation {
     {
     	return AllTrans;
     }
+    
+    public ArrayList<String> getFlatTrans()
+    {
+    	return flatTrans;
+    }
+
     
 }
