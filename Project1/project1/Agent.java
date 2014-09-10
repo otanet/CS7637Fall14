@@ -85,14 +85,14 @@ public class Agent {
     	ArrayList<ObjectTrans> temptransList = goal.getTrans();
     	
     	//Let's see if we got the right information. Print it to the screen.
-    	System.out.println("-------GOAL-------");
+    	//System.out.println("-------GOAL-------");
     	for(int y=0; y< temptransList.size();y++)
     	{
     		ObjectTrans workingObject = temptransList.get(y);
     		
     		for(int x=0; x<workingObject.getDiffArray().size(); x++)
     		{
-    			System.out.println(workingObject.getDiffArray().get(x));
+    			//System.out.println(workingObject.getDiffArray().get(x));
     		}
     	}
     	
@@ -108,19 +108,24 @@ public class Agent {
 	    	//ObjectTrans temp = new ObjectTrans(C.getObjects().get(0),figures.get(options.get(guesses)).getObjects().get(0));
 	    	transformations.add(tempTrans);
 	    	
-	    	System.out.println("-------Guess #"+ guesses + "------");
+	    	//System.out.println("-------Guess #"+ guesses + "------");
     	
 	    	
     	for(int x=0; x<tempTrans.getTrans().size(); x++)
     		{
     		for(int y=0;y<tempTrans.getTrans().get(x).getDiffArray().size();y++)
-    			System.out.println(tempTrans.getTrans().get(x).getDiffArray().get(y));
+    		{
+    			//System.out.println(tempTrans.getTrans().get(x).getDiffArray().get(y));
+    		}
     		}
     	}
     	
     
     //Now that the difference array is built, compare them to the goal transformations
-    //and make a guess at the answer
+    //and create a score for each guess. 
+    	Integer score = 0;
+    	ArrayList<Integer> ScoreList = new ArrayList<>();
+    	
     	for(Integer guesses = 0; guesses < 6; guesses++)
     	{
     		//number of object transformations
@@ -130,9 +135,10 @@ public class Agent {
     		{
     			ArrayList<String> goalarray = goal.getTrans().get(objects).getDiffArray();
     			ArrayList<String> guessarray = transformations.get(guesses).getTrans().get(objects).getDiffArray();
-    			if (goalarray.equals(guessarray))
+    			
+    			for(int x=0;x<goalarray.size();x++)
     			{
-    				match = match + 1;
+    				
     			}
     		}
     		if (match == numObjects)

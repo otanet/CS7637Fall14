@@ -51,12 +51,14 @@ public class Transformation {
     	else if(numberObjectsFrom < maxObjects)
     	{
     		RavensObject emptyObject = new RavensObject("dne");
-    		ObjectTrans temp1 = new ObjectTrans(emptyObject,figureTo.getObjects().get(x));
+    		ObjectTrans temp = new ObjectTrans(emptyObject,figureTo.getObjects().get(x));
+    		AllTrans.add(temp);
     	}
     	else if(numberObjectsTo < maxObjects)
     	{
     		RavensObject emptyObject = new RavensObject("dne");
-    		ObjectTrans temp1 = new ObjectTrans(figureFrom.getObjects().get(x),emptyObject);
+    		ObjectTrans temp = new ObjectTrans(figureFrom.getObjects().get(x),emptyObject);
+    		AllTrans.add(temp);
     	}
     }
     

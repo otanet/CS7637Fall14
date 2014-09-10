@@ -9,6 +9,10 @@ public class ObjectTrans {
     ArrayList<RavensAttribute> attributes1;  //list of the attributes for first figure
     ArrayList<RavensAttribute> attributes2;  //list of the attributes for second figure
     ArrayList<String> differences; //actual differences array?
+    Integer numberAttributesFrom;
+    Integer numberAttributesTo;
+    Integer maxAttributes;
+    Integer minAttributes;
     //differences array looks something like this:
     //<same,same,attribute1,attribute2,same,same,dne,dne>
     
@@ -19,13 +23,18 @@ public class ObjectTrans {
         name2 = object2.getName();
         attributes1 = object1.getAttributes();
         attributes2 = object2.getAttributes();
+        numberAttributesFrom = attributes1.size();
+        numberAttributesTo = attributes2.size();
+        
+    	maxAttributes = (numberAttributesFrom > numberAttributesTo) ? numberAttributesFrom : numberAttributesTo;
+    	minAttributes = (numberAttributesFrom < numberAttributesTo) ? numberAttributesFrom : numberAttributesTo;
         differences = new ArrayList<>();
         setDiffArray();
     }
 
     public void setDiffArray()
     {
-    	for(int x = 0; x < attributes1.size(); x++)
+    	for(int x = 0; x < maxAttributes; x++)
     	{
     		if (!name1.equals("dne") && !name2.equals("dne"))
     		{
