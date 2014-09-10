@@ -68,14 +68,16 @@ public class Agent {
     //Tell console what you're doing
     	System.out.println("Agent.java iteration = " + index + " Problem Name = " + problem.getName() + "");
     	
-    //Get initial figures and make the goal transformation difference object
-    //At the end of this section, we will have 
-    // <Transforamtion> goal
-    //						<ArrayList>AllTrans
-    //									<ObjectTrans> objectTrans1
-    //									<ObjectTrans> objectTrans2
-    //									...
-    //where maxObjects is the maximum number of objects from both figures.
+/**
+ *     Get initial figures and make the goal transformation difference object
+ *   At the end of this section, we will have 
+ *    <Transforamtion> goal
+ *  						<ArrayList>AllTrans
+ *  	 								<ObjectTrans> objectTrans1
+ *   									<ObjectTrans> objectTrans2
+ *   									...
+ *   where maxObjects is the maximum number of objects from both figures.
+ */
     	
     	HashMap<String, RavensFigure> figures = problem.getFigures();
     	RavensFigure A = figures.get("A");
@@ -85,16 +87,17 @@ public class Agent {
     	ArrayList<ObjectTrans> temptransList = goal.getTrans();
     	
     	//Let's see if we got the right information. Print it to the screen.
-    	//System.out.println("-------GOAL-------");
+    	/*System.out.println("-------GOAL-------");
     	for(int y=0; y< temptransList.size();y++)
     	{
     		ObjectTrans workingObject = temptransList.get(y);
     		
     		for(int x=0; x<workingObject.getDiffArray().size(); x++)
     		{
-    			//System.out.println(workingObject.getDiffArray().get(x));
+    			System.out.println(workingObject.getDiffArray().get(x));
     		}
     	}
+    	*/
     	
     //Get figure C and prep for looping through the 6 guesses.
     	RavensFigure C = figures.get("C");
@@ -108,15 +111,13 @@ public class Agent {
 	    	//ObjectTrans temp = new ObjectTrans(C.getObjects().get(0),figures.get(options.get(guesses)).getObjects().get(0));
 	    	transformations.add(tempTrans);
 	    	
-	    	//System.out.println("-------Guess #"+ guesses + "------");
-    	
-	    	
+	    System.out.println("-------Guess #"+ guesses + "------");
     	for(int x=0; x<tempTrans.getTrans().size(); x++)
     		{
     		for(int y=0;y<tempTrans.getTrans().get(x).getDiffArray().size();y++)
-    		{
-    			//System.out.println(tempTrans.getTrans().get(x).getDiffArray().get(y));
-    		}
+	    		{
+	    			System.out.println(tempTrans.getTrans().get(x).getDiffArray().get(y));
+	    		}
     		}
     	}
     	
