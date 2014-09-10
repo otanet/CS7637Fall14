@@ -123,33 +123,45 @@ public class Agent {
     
     //Now that the difference array is built, compare them to the goal transformations
     //and create a score for each guess. 
-    	Integer score = 0;
-    	ArrayList<Integer> ScoreList = new ArrayList<>();
+    	
+    	ArrayList<Integer> scoreList = new ArrayList<>();
     	
     	for(Integer guesses = 0; guesses < 6; guesses++)
     	{
     		//number of object transformations
     		Integer numObjects = goal.getTrans().size();
-    		Integer match = 0;
+    		Integer score = 0;
+    		
     		for(Integer objects = 0; objects < numObjects; objects++)
     		{
-    			ArrayList<String> goalarray = goal.getTrans().get(objects).getDiffArray();
-    			ArrayList<String> guessarray = transformations.get(guesses).getTrans().get(objects).getDiffArray();
-    			
-    			for(int x=0;x<goalarray.size();x++)
+    			ArrayList<String> temp = goal.getFlatTrans();
+    			ArrayList<String> temp2 = transformations.get(guesses).getFlatTrans();
+    			for (int x=0; x<temp.size(); x++)
     			{
-    				
+    				if (temp.get(x).equals(temp2.get(x)))
+    				{
+    					score = score + 1;
+    				}
     			}
+    			//ArrayList<String> goalarray = goal.getTrans().get(objects).getDiffArray();
+    			//ArrayList<String> guessarray = transformations.get(guesses).getTrans().get(objects).getDiffArray();
     		}
-    		if (match == numObjects)
+    		scoreList.add(score);
+    	}
+    	int maxValue = 0;
+    	
+    	for(int x=0;x<scoreList.size();x++)
+    	{
+    		if(scoreList.get(x)>maxValue)
     		{
-    			Integer temp = guesses + 1;
-    			answer = temp.toString();
+    			maxValue = scoreList.get(x);
     		}
     	}
-    	
+    	Integer answerint = scoreList.indexOf(maxValue) + 1;
+    	answer = answerint.toString();
     	
         index = index + 1;
+        
         
     //Print the answer in the console to stroke the ego.
         String correctAnswer = problem.checkAnswer(answer);
