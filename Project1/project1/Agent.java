@@ -1,8 +1,10 @@
 package project1;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map.Entry;
+import java.util.Set;
+
 
 /**
  * Your Agent for solving Raven's Progressive Matrices. You MUST modify this
@@ -26,10 +28,25 @@ public class Agent {
      * main().
      * 
      */
-	Integer index = 1;
-	
+    HashMap<String,String> transformHash = new HashMap<>();
+    HashMap<String,String> attributesHash = new HashMap<>();
+    HashMap<String,Double> transformPointsHash = new HashMap<>();
+    
     public Agent() {
+     //*** This holds the points of the transformation. 
+    	transformPointsHash.put("scaled", 100.0);
+        transformPointsHash.put("angle", 100.0);
+        transformPointsHash.put("fill", 100.0);
+        transformPointsHash.put("location", 100.0);
+     //*** This holds all of the possibilities of the transformation between the figures
+        transformHash.put("location","above,inside,under,below,left,right,left-of,right-of");
+        transformHash.put("fill","fill");
+        transformHash.put("scaled","size");
+        transformHash.put("angle","angle");
+     //*** this hold the actual attributes of the figures
+        attributesHash.put("fill","fill");
         
+
     }
     /**
      * The primary method for solving incoming Raven's Progressive Matrices.
@@ -56,124 +73,266 @@ public class Agent {
      * @param problem the RavensProblem your agent should solve
      * @return your Agent's answer to this problem
      */
-    public String Solve(RavensProblem problem) {
-        //Variables
-    	ArrayList<Transformation> transformations = new ArrayList<>();
-    	Transformation goal;
-    	String answer="0";
-    	ArrayList<String> options = new ArrayList<String>(Arrays.asList("1","2","3","4","5","6"));
-    	
-    	
-    	
-    //Tell console what you're doing
-    	System.out.println("Agent.java iteration = " + index + " Problem Name = " + problem.getName() + "");
-    	
-/**
- *     Get initial figures and make the goal transformation difference object
- *   At the end of this section, we will have 
- *    <Transforamtion> goal
- *  						<ArrayList>AllTrans
- *  	 								<ObjectTrans> objectTrans1
- *   									<ObjectTrans> objectTrans2
- *   									...
- *   where maxObjects is the maximum number of objects from both figures.
- */
-    	
-    	HashMap<String, RavensFigure> figures = problem.getFigures();
-    	RavensFigure A = figures.get("A");
-    	RavensFigure B = figures.get("B");
-    	
-    	goal = new Transformation(A,B);
-    	ArrayList<ObjectTrans> temptransList = goal.getTrans();
-    	
-    	//Let's see if we got the right information. Print it to the screen.
-    	/*System.out.println("-------GOAL-------");
-    	for(int y=0; y< temptransList.size();y++)
-    	{
-    		ObjectTrans workingObject = temptransList.get(y);
-    		
-    		for(int x=0; x<workingObject.getDiffArray().size(); x++)
-    		{
-    			System.out.println(workingObject.getDiffArray().get(x));
-    		}
-    	}
-    	*/
-    	
-    //Get figure C and prep for looping through the 6 guesses.
-    	RavensFigure C = figures.get("C");
-    	for(Integer guesses = 1; guesses < 7; guesses++)
-    	{
-    		RavensFigure tempFigure = figures.get(guesses.toString());
-    		
-    		Transformation tempTrans = new Transformation(C, tempFigure);
-        	temptransList = tempTrans.getTrans();
-        	
-	    	//ObjectTrans temp = new ObjectTrans(C.getObjects().get(0),figures.get(options.get(guesses)).getObjects().get(0));
-	    	transformations.add(tempTrans);
-	    	
-	    System.out.println("-------Guess #"+ guesses + "------");
-    	for(int x=0; x<tempTrans.getTrans().size(); x++)
-    		{
-    		for(int y=0;y<tempTrans.getTrans().get(x).getDiffArray().size();y++)
-	    		{
-	    			System.out.println(tempTrans.getTrans().get(x).getDiffArray().get(y));
-	    		}
-    		}
-    	}
-    	
+    public String Solve(RavensProblem problem) 
+    {
+        String answer="0";
+        System.out.println("-------------------------------------Problem:" + problem.getName());
+     //*** First load up all the Ravens figures
+        RavensFigure FigA = problem.getFigures().get("A");
+        RavensFigure FigB = problem.getFigures().get("B");
+        RavensFigure FigC = problem.getFigures().get("C");
+        RavensFigure Fig1 = problem.getFigures().get("1");
+        RavensFigure Fig2 = problem.getFigures().get("2");
+        RavensFigure Fig3 = problem.getFigures().get("3");
+        RavensFigure Fig4 = problem.getFigures().get("4");
+        RavensFigure Fig5 = problem.getFigures().get("5");
+        RavensFigure Fig6 = problem.getFigures().get("6");
+
+//used for debugging
+String debugName = problem.getName();
+if (debugName.equals("2x1 Basic Problem 14"))
+		{
+		
+    //*** Using the Ravens figures above, build transformation matrices using the compare routine
+
+        HashMap<String, String> compAB = CompareAndCorrelate(FigA, FigB);
+        HashMap<String, String> compC1 = CompareAndCorrelate(FigC, Fig1);
+        HashMap<String, String> compC2 = CompareAndCorrelate(FigC, Fig2);
+        HashMap<String, String> compC3 = CompareAndCorrelate(FigC, Fig3);
+        HashMap<String, String> compC4 = CompareAndCorrelate(FigC, Fig4);
+        HashMap<String, String> compC5 = CompareAndCorrelate(FigC, Fig5);
+        HashMap<String, String> compC6 = CompareAndCorrelate(FigC, Fig6);
+
+
+    //*** reset all the scores to zero
+        Double[] score = {0.0,0.0,0.0,0.0,0.0,0.0,0.0};
+        
+    //*** score each of the comparison matrices and place them in the scores array
+        score[1] = Score(compAB, compC1, "1");
+        score[2] = Score(compAB, compC2, "2");
+        score[3] = Score(compAB, compC3, "3");
+        score[4] = Score(compAB, compC4, "4");
+        score[5] = Score(compAB, compC5, "5");
+        score[6] = Score(compAB, compC6, "6");
+ 
+    //*** print out the scores for each comparison 
+        for(int x=0; x < score.length; x++)
+        {
+            System.out.println(x + " score:" + score[x]);
+      
+		}
+        
+    //*** compare all the scores to each other and select the maximum
+        double maxscore = score[0];
+        int iteration = 0;
+        for ( int i = 1; i < score.length; i++) 
+        {
+            if ( score[i] > maxscore) 
+            {
+              maxscore = score[i];
+              iteration = i;
+            }
+        }
+		
+
+    //*** the max score is the answer send it out.
+        answer = String.valueOf(iteration);
+        System.out.println("Answer: " + answer);
+        String correct = problem.checkAnswer(answer);
+        System.out.println("correct answer "+ correct);
+}//used for debug purposes: with if (debugName.equals("")) from above
+        return String.valueOf(answer);
+    //*** End of Main Loop-----End of Main Loop-----End of Main Loop-----End of Main Loop-----End of Main Loop-----End of Main Loop
+		
+    }
     
-    //Now that the difference array is built, compare them to the goal transformations
-    //and create a score for each guess. 
-    	
-    	ArrayList<Integer> scoreList = new ArrayList<>();
-    	
-    	for(Integer guesses = 0; guesses < 6; guesses++)
-    	{
-    		//number of object transformations
-    		Integer numObjects = goal.getTrans().size();
-    		Integer score = 0;
-    		
-    		for(Integer objects = 0; objects < numObjects; objects++)
-    		{
-    			ArrayList<String> temp = goal.getFlatTrans();
-    			ArrayList<String> temp2 = transformations.get(guesses).getFlatTrans();
-    			for (int x=0; x<temp.size(); x++)
-    			{
-    				if (temp.get(x).equals(temp2.get(x)))
-    				{
-    					score = score + 1;
-    				}
-    			}
-    			//ArrayList<String> goalarray = goal.getTrans().get(objects).getDiffArray();
-    			//ArrayList<String> guessarray = transformations.get(guesses).getTrans().get(objects).getDiffArray();
-    		}
-    		scoreList.add(score);
-    	}
-    	int maxValue = 0;
-    	
-    	for(int x=0;x<scoreList.size();x++)
-    	{
-    		if(scoreList.get(x)>maxValue)
-    		{
-    			maxValue = scoreList.get(x);
-    		}
-    	}
-    	Integer answerint = scoreList.indexOf(maxValue) + 1;
-    	answer = answerint.toString();
-    	
-        index = index + 1;
-        
-        
-    //Print the answer in the console to stroke the ego.
-        String correctAnswer = problem.checkAnswer(answer);
-        if (answer.equals(correctAnswer)==true)
+    //*** Used to score the transformations maps
+    private double Score(HashMap<String, String> reference, HashMap<String, String> guess, String number)
+    {
+        double score = 0;
+        HashSet<String> CShapes = new HashSet<>();
+        int CShapesQty = 0;
+        int figureChange = Integer.valueOf(reference.get("figure_change"));
+
+        Set<String> Cattributes = reference.keySet();
+        for(String key : Cattributes) //loop through all of the attributes in the "C" space. (we'll generalize "A" to "C")
         {
-        	System.out.println("CORRECT!");
+            String objectKey; 
+            if(key.split("\\.")[0].equals("A")) //replace the A with C to make this a more general routine
+            	objectKey = "C";
+            else
+            	objectKey = number;
+            
+            String exactKey = key.replaceFirst("\\w\\.", "");//remove figure number to look at the attribute and object.
+            
+            String CKey; 
+            if (exactKey.contains("."))
+            	CKey = objectKey + "." + exactKey; //deal with the specific attribute
+            else 
+            	CKey = exactKey; //only in the case of figure_change
+            
+            String val1 = reference.get(key);
+            String val2;
+            if (guess.containsKey(CKey))
+            	val2 = guess.get(CKey);
+            else val2 = null;
+            
+            //System.out.println(key + " : " + val1 + " - " + CKey + " : " + val2);
+            if(!key.contains("shape"))
+            {
+            	if (val1.equals(val2))
+            	{
+            		score = score + 1; //increase the score by one if the values are the same from A to C and B to 1
+            		System.out.println(key + " : " + val1 + " - " + CKey + " : " + val2);
+            		System.out.println("score added. Score = " + score);
+            		System.out.println();
+            	}
+            	
+            } 
+            else 
+            {
+                if (CKey.contains("C"))
+                {
+                    CShapes.add(val2); //keep a running tab on which shapes go together.
+                    CShapesQty = CShapesQty + 1;
+                }
+            }
+            if (key.contains("angle"))
+            {
+            	if (!val1.equals(val2))
+            	{
+            		//make rotations less than 180 degrees.
+            		Integer valone = Integer.parseInt(val1);
+            		Integer valtwo = Integer.parseInt(val2);
+            		if (valone > 180) valone = valone - 360;
+            		if (valtwo > 180) valtwo = valtwo - 360;
+            		if (Math.abs(valone)==Math.abs(valtwo)) 
+            			{
+            			score = score + 1.0;
+            			System.out.println("score added rotation > 180"); 
+            			}
+            	}
+            }
         }
-        else
+        
+        //*** tie breakers
+        int shapesInAnswer=0;
+        int expectedCountOfNewObjects = CShapesQty - Math.abs(figureChange);
+        System.out.println("Expected Objects: " + expectedCountOfNewObjects);
+        for(String shape:CShapes)
         {
-	        System.out.println("DAMN!");
+            shapesInAnswer=0;
+            for(String key : guess.keySet())
+            {
+                //Most objects from C should be in answer
+                if(key.contains("shape") && key.contains(number) && guess.get(key).equals(shape))
+                {
+                    score=score+1;
+                    System.out.println("score added shapes same. Score = " + score);
+                    System.out.println();
+                }
+                
+                if(key.contains("shape") && key.contains(number))
+                    shapesInAnswer++;
+            }
         }
-        return answer;   
+        //Amount of objects in answer should match quantity of objects in C minus deleted objects 
+        //(Comes into play for problem 05)
+        if(shapesInAnswer == expectedCountOfNewObjects)
+        {
+            score = score + 1;
+            System.out.println("score added number of shapes the same. Score = " + score);
+            System.out.println();
+        }
+        
+        System.out.println("score "+score);
+        System.out.println();
+        System.out.println();
+        
+        return score;
+    
+    }
+    
+    
+    //*** Compare the two figures, correlate them, and then create a transformation Hashmap 
+    private HashMap<String,String> CompareAndCorrelate(RavensFigure figure1, RavensFigure figure2)
+    {	
+        HashMap<String,String> returnHash = new HashMap<>();
+        HashMap<String,String> fig1Hash = new HashMap<>();
+        HashMap<String,String> fig2Hash = new HashMap<>();
+        HashMap<String,String> workingHash = new HashMap<>();
+        
+        ExtractAttributes(figure1, fig1Hash);
+        ExtractAttributes(figure2, fig2Hash);
+        
+        int countChange = figure2.getObjects().size() - figure1.getObjects().size();
+        
+        for(Entry<String,String> entry : fig1Hash.entrySet())
+        {
+        	workingHash.put(figure1.getName()+"."+entry.getKey(), entry.getValue());
+        }
+        for(Entry<String,String> entry : fig2Hash.entrySet())
+        {
+        	workingHash.put(figure2.getName()+"."+entry.getKey(), entry.getValue());
+        }
+        
+        //Now do the correlation
+        Set<String> working = workingHash.keySet();
+        for(String key : working)
+        {
+        	if (key.contains("Y"))
+        	{	//If the Y figure exists, we know we have more than one figure, therefore correlate
+        		System.out.print("correlate");
+        		System.out.println();
+        		
+        		//match shape C.Z.shape -> 1.Z.shape
+        		//match shape C.X.shape -> 1.X.shape
+        		//match shape C.Y.shape -> 1.Y.shape
+        		//match shape C.Z.size -> 1.Z.size
+        		//match shape C.X.size -> 1.X.size
+        		//match shape C.Y.size -> 1.Y.size
+        		
+        		//does size exist?
+        		//two sizes that are the same? if so... forget it.
+        		//match size C.Z.size -> whatever has the same size -> rename value for Z or X or Y-> call it the same as C.(this value, XYZ)
+        		//repeat for other two.
+        	}
+        }
+        	
+
+        
+        returnHash = workingHash;
+        //inform that the figure has changed
+        returnHash.put("figure_change", ""+ countChange);
+
+        return returnHash;
+    }
+
+    private void ExtractAttributes(RavensFigure figure, HashMap<String, String> ret) {
+        for(RavensObject obj:figure.getObjects())
+        {
+            String objName = obj.getName();
+            for(RavensAttribute att:obj.getAttributes())
+            {
+                ret.put(obj.getName()+"."+att.getName(), att.getValue());
+            }
+        }
+    }
+    
+    private HashSet<RavensAttribute> FindDifference(RavensObject A, RavensObject B)
+    {
+        HashSet<RavensAttribute> ret = new HashSet<RavensAttribute>();
+        for(RavensAttribute ravensAttributeA : A.getAttributes())
+        {
+            for(RavensAttribute ravensAttributeB : B.getAttributes())
+            {
+                if (ravensAttributeA.getName() == null ? ravensAttributeB.getName() == null : ravensAttributeA.getName().equals(ravensAttributeB.getName()))
+                    if(ravensAttributeA.getValue() == null ? ravensAttributeB.getValue() != null : !ravensAttributeA.getValue().equals(ravensAttributeB.getValue()))
+                        ret.add(new RavensAttribute(ravensAttributeA.getName(), ravensAttributeB.getValue()));
+            }
+                
+        }
+        
+        return ret;
     }
 }
