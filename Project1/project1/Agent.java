@@ -95,15 +95,15 @@ String debugName = problem.getName();
 		
     //*** Using the Ravens figures above, build transformation matrices using the compare routine
 ///*** ***********************************************************************************************************************
-		HashMap<String,String> ObjectMapping = VerifyCorrelation(FigA,FigB);
+		//HashMap<String,String> ObjectMapping = VerifyCorrelation(FigA,FigB);
 ///*** ***********************************************************************************************************************
-        HashMap<String, String> compAB = CompareAndCorrelate(FigA, FigB, ObjectMapping);
-        HashMap<String, String> compC1 = CompareAndCorrelate(FigC, Fig1, ObjectMapping);
-        HashMap<String, String> compC2 = CompareAndCorrelate(FigC, Fig2, ObjectMapping);
-        HashMap<String, String> compC3 = CompareAndCorrelate(FigC, Fig3, ObjectMapping);
-        HashMap<String, String> compC4 = CompareAndCorrelate(FigC, Fig4, ObjectMapping);
-        HashMap<String, String> compC5 = CompareAndCorrelate(FigC, Fig5, ObjectMapping);
-        HashMap<String, String> compC6 = CompareAndCorrelate(FigC, Fig6, ObjectMapping);
+        HashMap<String, String> compAB = CompareAndCorrelate(FigA, FigB); //ObjectMapping
+        HashMap<String, String> compC1 = CompareAndCorrelate(FigC, Fig1);
+        HashMap<String, String> compC2 = CompareAndCorrelate(FigC, Fig2);
+        HashMap<String, String> compC3 = CompareAndCorrelate(FigC, Fig3);
+        HashMap<String, String> compC4 = CompareAndCorrelate(FigC, Fig4);
+        HashMap<String, String> compC5 = CompareAndCorrelate(FigC, Fig5);
+        HashMap<String, String> compC6 = CompareAndCorrelate(FigC, Fig6);
 
 
     //*** reset all the scores to zero
@@ -314,14 +314,14 @@ String debugName = problem.getName();
     
     
     //*** Compare the two figures, correlate them, and then create a transformation Hashmap 
-    private HashMap<String,String> CompareAndCorrelate(RavensFigure figure1, RavensFigure figure2, HashMap<String,String> ObjectMapping)
+    private HashMap<String,String> CompareAndCorrelate(RavensFigure figure1, RavensFigure figure2) //, HashMap<String,String> ObjectMapping
     {	
         HashMap<String,String> returnHash = new HashMap<>();
         HashMap<String,String> fig1Hash = new HashMap<>();
         HashMap<String,String> fig2Hash = new HashMap<>();
         HashMap<String,String> workingHash = new HashMap<>();
         
-        //**************************
+        /**************************
         HashMap<String,String> realObjectMappingFig1 = new HashMap<>();
         if(!ObjectMapping.isEmpty() ){
             for(Entry<String,String> entry : ObjectMapping.entrySet()){
@@ -353,11 +353,11 @@ String debugName = problem.getName();
             }
         }
         
+        //********************************************************************************/
+        ExtractAttributes(figure1, fig1Hash );//realObjectMappingFig1
+        ExtractAttributes(figure2, fig2Hash );//realObjectMappingFig2
         
-        ExtractAttributes(figure1, realObjectMappingFig1);
-        ExtractAttributes(figure2, realObjectMappingFig2);
-        
-      //********************************************************************************
+      
         
         int countChange = figure2.getObjects().size() - figure1.getObjects().size();
         
