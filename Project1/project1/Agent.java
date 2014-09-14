@@ -90,18 +90,20 @@ public class Agent {
 
 //used for debugging
 String debugName = problem.getName();
-if (debugName.equals("2x1 Basic Problem 14"))
-		{
+//if (debugName.equals("2x1 Basic Problem 14"))
+//		{
 		
     //*** Using the Ravens figures above, build transformation matrices using the compare routine
-
-        HashMap<String, String> compAB = CompareAndCorrelate(FigA, FigB);
-        HashMap<String, String> compC1 = CompareAndCorrelate(FigC, Fig1);
-        HashMap<String, String> compC2 = CompareAndCorrelate(FigC, Fig2);
-        HashMap<String, String> compC3 = CompareAndCorrelate(FigC, Fig3);
-        HashMap<String, String> compC4 = CompareAndCorrelate(FigC, Fig4);
-        HashMap<String, String> compC5 = CompareAndCorrelate(FigC, Fig5);
-        HashMap<String, String> compC6 = CompareAndCorrelate(FigC, Fig6);
+///*** ***********************************************************************************************************************
+		HashMap<String,String> ObjectMapping = VerifyCorrelation(FigA,FigB);
+///*** ***********************************************************************************************************************
+        HashMap<String, String> compAB = CompareAndCorrelate(FigA, FigB, ObjectMapping);
+        HashMap<String, String> compC1 = CompareAndCorrelate(FigC, Fig1, ObjectMapping);
+        HashMap<String, String> compC2 = CompareAndCorrelate(FigC, Fig2, ObjectMapping);
+        HashMap<String, String> compC3 = CompareAndCorrelate(FigC, Fig3, ObjectMapping);
+        HashMap<String, String> compC4 = CompareAndCorrelate(FigC, Fig4, ObjectMapping);
+        HashMap<String, String> compC5 = CompareAndCorrelate(FigC, Fig5, ObjectMapping);
+        HashMap<String, String> compC6 = CompareAndCorrelate(FigC, Fig6, ObjectMapping);
 
 
     //*** reset all the scores to zero
@@ -140,13 +142,57 @@ if (debugName.equals("2x1 Basic Problem 14"))
         System.out.println("Answer: " + answer);
         String correct = problem.checkAnswer(answer);
         System.out.println("correct answer "+ correct);
-}//used for debug purposes: with if (debugName.equals("")) from above
+//}//used for debug purposes: with if (debugName.equals("")) from above
         return String.valueOf(answer);
     //*** End of Main Loop-----End of Main Loop-----End of Main Loop-----End of Main Loop-----End of Main Loop-----End of Main Loop
 		
     }
     
     //*** Used to score the transformations maps
+    private HashMap<String,String> VerifyCorrelation(RavensFigure figure1, RavensFigure figure2) {
+        HashMap<String,String> corrFig1 = new HashMap<>();
+        HashMap<String,String> corrFig2 = new HashMap<>();
+        HashMap<String,String> retCorrelation = new HashMap<>();
+        boolean correlated = true;
+        
+        for(RavensObject obj:figure1.getObjects())
+        {
+            for(RavensAttribute att :  obj.getAttributes()){
+                if(att.getName().toLowerCase().contains("shape") || att.getName().toLowerCase().contains("size")){
+                    corrFig1.put(obj.getName()+"."+att.getName(), att.getValue());
+                    
+                }
+            }
+            
+        }
+        for(RavensObject obj:figure2.getObjects())
+        {
+            for(RavensAttribute att :  obj.getAttributes()){
+                if(att.getName().toLowerCase().contains("shape") || att.getName().toLowerCase().contains("size")){
+                    corrFig2.put(obj.getName()+"."+att.getName(), att.getValue());
+                }
+            }
+            
+        }
+        
+         
+        //Test correlations
+        for(Entry<String,String> entry : corrFig1.entrySet()){
+            if(corrFig2.containsKey(entry.getKey()) && !entry.getValue().equals(corrFig2.get(entry.getKey())))
+                correlated = false;
+        }
+        //HashMap<String, String> ab = BuildComparisonSheet( corrFig1, corrFig2);
+        if(correlated){
+            //ret.put("tf-correlated", "yes");
+            for(Entry<String,String> entry : corrFig1.entrySet()){
+                if(entry.getKey().toLowerCase().contains("size"))
+                    retCorrelation.put(entry.getKey(), entry.getValue());
+            }
+        }
+        int d=0;
+        return retCorrelation;
+    }
+    
     private double Score(HashMap<String, String> reference, HashMap<String, String> guess, String number)
     {
         double score = 0;
@@ -154,12 +200,20 @@ if (debugName.equals("2x1 Basic Problem 14"))
         int CShapesQty = 0;
         int figureChange = Integer.valueOf(reference.get("figure_change"));
 
+        Set<String> debug = reference.keySet();
+        for(String debugkey : debug)
+        {
+        	System.out.println(debugkey + "\t" + reference.get(debugkey));
+        }
         Set<String> Cattributes = reference.keySet();
         for(String key : Cattributes) //loop through all of the attributes in the "C" space. (we'll generalize "A" to "C")
         {
             String objectKey; 
-            if(key.split("\\.")[0].equals("A")) //replace the A with C to make this a more general routine
+            if(key.split("\\.")[0].equals("A")) //replace the A with C to do lookups in guess
+            	{
             	objectKey = "C";
+            	System.out.println("Changed A to C");
+            	}
             else
             	objectKey = number;
             
@@ -170,22 +224,22 @@ if (debugName.equals("2x1 Basic Problem 14"))
             	CKey = objectKey + "." + exactKey; //deal with the specific attribute
             else 
             	CKey = exactKey; //only in the case of figure_change
-            
+            System.out.println("CKey = " + CKey);
             String val1 = reference.get(key);
             String val2;
             if (guess.containsKey(CKey))
             	val2 = guess.get(CKey);
             else val2 = null;
             
-            //System.out.println(key + " : " + val1 + " - " + CKey + " : " + val2);
+            System.out.println(key + " : " + val1 + " - " + CKey + " : " + val2);
             if(!key.contains("shape"))
             {
             	if (val1.equals(val2))
             	{
             		score = score + 1; //increase the score by one if the values are the same from A to C and B to 1
-            		System.out.println(key + " : " + val1 + " - " + CKey + " : " + val2);
-            		System.out.println("score added. Score = " + score);
-            		System.out.println();
+            		//System.out.println(key + " : " + val1 + " - " + CKey + " : " + val2);
+            		System.out.println("attribute score added. Score = " + score);
+            		//System.out.println();
             	}
             	
             } 
@@ -195,6 +249,8 @@ if (debugName.equals("2x1 Basic Problem 14"))
                 {
                     CShapes.add(val2); //keep a running tab on which shapes go together.
                     CShapesQty = CShapesQty + 1;
+                    System.out.println("\tCShape added CKey = " + CKey);
+                    System.out.println("\tCShape value added = " + val2);
                 }
             }
             if (key.contains("angle"))
@@ -221,6 +277,7 @@ if (debugName.equals("2x1 Basic Problem 14"))
         System.out.println("Expected Objects: " + expectedCountOfNewObjects);
         for(String shape:CShapes)
         {
+            System.out.println("CShape value: " + shape);
             shapesInAnswer=0;
             for(String key : guess.keySet())
             {
@@ -228,7 +285,9 @@ if (debugName.equals("2x1 Basic Problem 14"))
                 if(key.contains("shape") && key.contains(number) && guess.get(key).equals(shape))
                 {
                     score=score+1;
-                    System.out.println("score added shapes same. Score = " + score);
+                    System.out.println("\t\tscore added shapes same. Score = " + score);
+                    System.out.println("\t\tshape from CShapes: " + shape);
+                    System.out.println("\t\tguess key; " + key);
                     System.out.println();
                 }
                 
@@ -245,7 +304,7 @@ if (debugName.equals("2x1 Basic Problem 14"))
             System.out.println();
         }
         
-        System.out.println("score "+score);
+        System.out.println("score " + score);
         System.out.println();
         System.out.println();
         
@@ -255,15 +314,50 @@ if (debugName.equals("2x1 Basic Problem 14"))
     
     
     //*** Compare the two figures, correlate them, and then create a transformation Hashmap 
-    private HashMap<String,String> CompareAndCorrelate(RavensFigure figure1, RavensFigure figure2)
+    private HashMap<String,String> CompareAndCorrelate(RavensFigure figure1, RavensFigure figure2, HashMap<String,String> ObjectMapping)
     {	
         HashMap<String,String> returnHash = new HashMap<>();
         HashMap<String,String> fig1Hash = new HashMap<>();
         HashMap<String,String> fig2Hash = new HashMap<>();
         HashMap<String,String> workingHash = new HashMap<>();
         
-        ExtractAttributes(figure1, fig1Hash);
-        ExtractAttributes(figure2, fig2Hash);
+        //**************************
+        HashMap<String,String> realObjectMappingFig1 = new HashMap<>();
+        if(!ObjectMapping.isEmpty() ){
+            for(Entry<String,String> entry : ObjectMapping.entrySet()){
+                String size = entry.getValue();
+                for(RavensObject obj:figure1.getObjects())
+                {
+                    for(RavensAttribute att :  obj.getAttributes()){
+                        if(att.getName().toLowerCase().contains("size") && att.getValue().equals(size)){
+                            realObjectMappingFig1.put(obj.getName(), entry.getKey().split("\\.")[0]);
+                        }
+                    }
+
+                }
+            }
+        }
+        HashMap<String,String> realObjectMappingFig2 = new HashMap<>();
+        if(!ObjectMapping.isEmpty() ){
+            for(Entry<String,String> entry : ObjectMapping.entrySet()){
+                String size = entry.getValue();
+                for(RavensObject obj:figure2.getObjects())
+                {
+                    for(RavensAttribute att :  obj.getAttributes()){
+                        if(att.getName().toLowerCase().contains("size") && att.getValue().equals(size)){
+                            realObjectMappingFig2.put(obj.getName(), entry.getKey().split("\\.")[0]);
+                        }
+                    }
+
+                }
+            }
+        }
+        
+        
+        ExtractAttributes(figure1, realObjectMappingFig1);
+        ExtractAttributes(figure2, realObjectMappingFig2);
+        
+      //********************************************************************************
         
         int countChange = figure2.getObjects().size() - figure1.getObjects().size();
         
@@ -282,7 +376,7 @@ if (debugName.equals("2x1 Basic Problem 14"))
         {
         	if (key.contains("Y"))
         	{	//If the Y figure exists, we know we have more than one figure, therefore correlate
-        		System.out.print("correlate");
+        		//System.out.print("correlate");
         		System.out.println();
         		
         		//match shape C.Z.shape -> 1.Z.shape
