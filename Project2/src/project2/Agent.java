@@ -80,29 +80,29 @@ public class Agent {
         println();
         println("---------------PROBLEM:" + problem.getName() +"----------------");
         println();
-        RavensFigure objA = problem.getFigures().get("A");
-        RavensFigure objB = problem.getFigures().get("B");
-        RavensFigure objC = problem.getFigures().get("C");
-        RavensFigure obj1 = problem.getFigures().get("1");
-        RavensFigure obj2 = problem.getFigures().get("2");
-        RavensFigure obj3 = problem.getFigures().get("3");
-        RavensFigure obj4 = problem.getFigures().get("4");
-        RavensFigure obj5 = problem.getFigures().get("5");
-        RavensFigure obj6 = problem.getFigures().get("6");
+        RavensFigure figA = problem.getFigures().get("A");
+        RavensFigure figB = problem.getFigures().get("B");
+        RavensFigure figC = problem.getFigures().get("C");
+        RavensFigure fig1 = problem.getFigures().get("1");
+        RavensFigure fig2 = problem.getFigures().get("2");
+        RavensFigure fig3 = problem.getFigures().get("3");
+        RavensFigure fig4 = problem.getFigures().get("4");
+        RavensFigure fig5 = problem.getFigures().get("5");
+        RavensFigure fig6 = problem.getFigures().get("6");
         
 
-        //String debugProblem = "2x1 Basic Problem 01";
+        //String debugProblem = "2x2 Basic Problem 01";
         //if (problem.getName().equals(debugProblem)){
         
         //-- Stage 1
-        HashMap<String,String> ObjectMapping = VerifyCorrelation(objA,objB);
-        HashMap<String, String> ab = BuildComparisonSheet(objA, objB, new HashMap<String,String>());
-        HashMap<String, String> c1 = BuildComparisonSheet(objC, obj1, ObjectMapping);
-        HashMap<String, String> c2 = BuildComparisonSheet(objC, obj2, ObjectMapping);
-        HashMap<String, String> c3 = BuildComparisonSheet(objC, obj3, ObjectMapping);
-        HashMap<String, String> c4 = BuildComparisonSheet(objC, obj4, ObjectMapping);
-        HashMap<String, String> c5 = BuildComparisonSheet(objC, obj5, ObjectMapping);
-        HashMap<String, String> c6 = BuildComparisonSheet(objC, obj6, ObjectMapping);
+        HashMap<String,String> ObjectMapping = VerifyCorrelation(figA,figB);
+        HashMap<String, String> ab = BuildComparisonSheet(figA, figB, new HashMap<String,String>());
+        HashMap<String, String> c1 = BuildComparisonSheet(figC, fig1, ObjectMapping);
+        HashMap<String, String> c2 = BuildComparisonSheet(figC, fig2, ObjectMapping);
+        HashMap<String, String> c3 = BuildComparisonSheet(figC, fig3, ObjectMapping);
+        HashMap<String, String> c4 = BuildComparisonSheet(figC, fig4, ObjectMapping);
+        HashMap<String, String> c5 = BuildComparisonSheet(figC, fig5, ObjectMapping);
+        HashMap<String, String> c6 = BuildComparisonSheet(figC, fig6, ObjectMapping);
 
         int[] score = {0,0,0,0,0,0,0};
         
@@ -131,7 +131,7 @@ public class Agent {
         int wrong=0;
         answer = String.valueOf(maxI);
         println("Answer: "+answer);
-       // }//For debugging purposes
+    //    }//For debugging purposes
         String correctAnswer = problem.checkAnswer(answer);
         System.out.println("The correct answer is: "+ correctAnswer);
         System.out.println("Robbie guessed: "+ answer);
@@ -270,6 +270,7 @@ public class Agent {
         {
             if (entry.toLowerCase().contains("shape"))
             {
+                //We just want the key attribute
                 String shapeRet1 = ret1.get(entry);
                 String shapeRet2 = (ret1.containsKey(entry)) ?ret2.get(entry):"";
                 if(!shapeRet1.equals(shapeRet2)){
@@ -342,9 +343,9 @@ public class Agent {
             }
         }
         
-        
-        ExtractAttributes(figure1, ret1, realObjectMappingFig1);
-        ExtractAttributes(figure2, ret2, realObjectMappingFig2);
+        Integer objNum = 0;
+        ExtractAttributes(figure1, ret1, realObjectMappingFig1, objNum);
+        ExtractAttributes(figure2, ret2, realObjectMappingFig2, objNum);
         
         
         int cnt = figure2.getObjects().size() - figure1.getObjects().size();
@@ -408,14 +409,25 @@ public class Agent {
         return ret;
     }
 
-    private void ExtractAttributes(RavensFigure figure, HashMap<String, String> ret, HashMap<String,String> realObjectMapping) {
+    private void ExtractAttributes(RavensFigure figure, HashMap<String, String> ret, HashMap<String,String> realObjectMapping, Integer objNum) {
         for(RavensObject obj:figure.getObjects())
         {
-            String objName = obj.getName();
+            
+            //we will correlate the objects via 1, 2, 3, etc.
+            String objName = objNum.toString(); // was obj.getName();
+            String realName = "";
             for(RavensAttribute att:obj.getAttributes())
             {
                 //ret.put(figure.getName()+"."+obj.getName()+"."+att.getName(), att.getValue());
-                String realName = (!realObjectMapping.isEmpty() && realObjectMapping.containsKey(obj.getName()))? realObjectMapping.get(obj.getName()):obj.getName();
+                if (!realObjectMapping.isEmpty()&& realObjectMapping.containsKey(obj.getName()))
+                {
+                     realName = realObjectMapping.get(obj.getName());
+                }
+                else
+                {
+                     realName = objName; //obj.getName();
+                }
+                //String realName = (!realObjectMapping.isEmpty() && realObjectMapping.containsKey(obj.getName()))? realObjectMapping.get(obj.getName()):obj.getName();
                 ret.put(realName+"."+att.getName(), att.getValue());
             }
         }
@@ -427,21 +439,26 @@ public class Agent {
         HashMap<String,String> retCorrelation = new HashMap<>();
         boolean correlated = true;
         
+        Integer objNumber = 0;
         for(RavensObject obj:figure1.getObjects())
         {
+            //we will do the correlations by shape and size and use 1, 2, 3, etc for shape correlation
             for(RavensAttribute att :  obj.getAttributes()){
                 if(att.getName().toLowerCase().contains("shape") || att.getName().toLowerCase().contains("size")){
-                    corrFig1.put(obj.getName()+"."+att.getName(), att.getValue());
+                    corrFig1.put(objNumber.toString()+"."+att.getName(), att.getValue());  //was obj.getName() for first one.
+                    objNumber++;
                     
                 }
             }
             
         }
+        objNumber = 0;
         for(RavensObject obj:figure2.getObjects())
         {
             for(RavensAttribute att :  obj.getAttributes()){
                 if(att.getName().toLowerCase().contains("shape") || att.getName().toLowerCase().contains("size")){
-                    corrFig2.put(obj.getName()+"."+att.getName(), att.getValue());
+                    corrFig2.put(objNumber+"."+att.getName(), att.getValue());  //was obj.getName() for first one.
+                    objNumber++;
                 }
             }
             
