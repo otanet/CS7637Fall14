@@ -36,6 +36,7 @@ public class Agent {
     HashMap<String,String> transformations = new HashMap<>();
     HashMap<String,String> attributes = new HashMap<>();
     HashMap<String,Double> transformationScore = new HashMap<>();
+    String problemName;
     
     public Agent() {
         transformations.put("scaled","size");
@@ -49,6 +50,8 @@ public class Agent {
         transformationScore.put("angle", 1.0);
         transformationScore.put("fill", 1.0);
         transformationScore.put("location", 1.0);
+        
+        
     }
     /**
      * The primary method for solving incoming Raven's Progressive Matrices.
@@ -90,10 +93,12 @@ public class Agent {
         RavensFigure fig5 = problem.getFigures().get("5");
         RavensFigure fig6 = problem.getFigures().get("6");
         
-
-        //String debugProblem = "2x2 Basic Problem 01";
-        //if (problem.getName().equals(debugProblem)){
+        problemName = problem.getName();
         
+//******************************DEBUG*********************************
+        String debugProblem = "2x2 Basic Problem 01";
+        if (problem.getName().equals(debugProblem)){
+//******************************DEBUG*********************************
         //-- Stage 1
         HashMap<String,String> ObjectMapping = VerifyCorrelation(figA,figB);
         HashMap<String, String> ab = BuildComparisonSheet(figA, figB, new HashMap<String,String>());
@@ -105,6 +110,7 @@ public class Agent {
         HashMap<String, String> c6 = BuildComparisonSheet(figC, fig6, ObjectMapping);
 
         int[] score = {0,0,0,0,0,0,0};
+        //int[] score_2 = {0,0,0,0,0,0,0};
         
         //--Stage 2 & 3
         score[1]+=ScoreFactSheets(ab, c1, "1");
@@ -114,10 +120,38 @@ public class Agent {
         score[5]+=ScoreFactSheets(ab, c5, "5");
         score[6]+=ScoreFactSheets(ab, c6, "6");
         
+        if (problem.getProblemType().equals("2x2"))
+        {
+        ObjectMapping = VerifyCorrelation(figA,figC);
+        HashMap<String, String> ab_2 = BuildComparisonSheet(figA, figC, new HashMap<String,String>());
+        HashMap<String, String> b1_2 = BuildComparisonSheet(figB, fig1, ObjectMapping);
+        HashMap<String, String> b2_2 = BuildComparisonSheet(figB, fig2, ObjectMapping);
+        HashMap<String, String> b3_2 = BuildComparisonSheet(figB, fig3, ObjectMapping);
+        HashMap<String, String> b4_2 = BuildComparisonSheet(figB, fig4, ObjectMapping);
+        HashMap<String, String> b5_2 = BuildComparisonSheet(figB, fig5, ObjectMapping);
+        HashMap<String, String> b6_2 = BuildComparisonSheet(figB, fig6, ObjectMapping);
+
+        
+        
+        //--Stage 2 & 3
+        score[1]+=ScoreFactSheets(ab_2, b1_2, "1");
+        score[2]+=ScoreFactSheets(ab_2, b2_2, "2");
+        score[3]+=ScoreFactSheets(ab_2, b3_2, "3");
+        score[4]+=ScoreFactSheets(ab_2, b4_2, "4");
+        score[5]+=ScoreFactSheets(ab_2, b5_2, "5");
+        score[6]+=ScoreFactSheets(ab_2, b6_2, "6");
+            
+        }
+        
         //--Stage 4
         for(int i=0;i<score.length;i++){
             println(i+"=>"+score[i]);
         }
+        println();
+        
+//        for(int i=0;i<score_2.length;i++){
+//            println(i+"=>"+score_2[i]);
+//        }
         
         int max = score[0];
         int maxI = 0;
@@ -131,7 +165,9 @@ public class Agent {
         int wrong=0;
         answer = String.valueOf(maxI);
         println("Answer: "+answer);
-    //    }//For debugging purposes
+//******************************DEBUG*********************************
+        }//For debugging purposes
+//******************************DEBUG*********************************
         String correctAnswer = problem.checkAnswer(answer);
         System.out.println("The correct answer is: "+ correctAnswer);
         System.out.println("Robbie guessed: "+ answer);
@@ -273,9 +309,13 @@ public class Agent {
                 //We just want the key attribute
                 String shapeRet1 = ret1.get(entry);
                 String shapeRet2 = (ret1.containsKey(entry)) ?ret2.get(entry):"";
-                if(!shapeRet1.equals(shapeRet2)){
-                    shapeChanged = true;
-                    cnt++;
+                if (shapeRet2 != null)
+                {
+                    if(!shapeRet1.equals(shapeRet2))
+                    {
+                        shapeChanged = true;
+                        cnt++;
+                    }
                 }
             }
         }
@@ -303,6 +343,28 @@ public class Agent {
         
         if(fillChanged)
             ret.put("tf-fill_changed", String.valueOf(cnt));
+    }
+        
+    private void WasShapeScaled(HashMap<String,String> ret1, HashMap<String,String> ret2, HashMap<String,String> ret)
+    {
+        boolean scaleChanged = false;
+        int cnt = 0;
+        Set test = ret1.keySet();
+        for(String entry : ret1.keySet())
+        {
+            if (entry.toLowerCase().contains("size"))
+            {
+                String shapeRet1 = ret1.get(entry);
+                String shapeRet2 = (ret1.containsKey(entry)) ?ret2.get(entry):"";
+                if(!shapeRet1.equals(shapeRet2)){
+                    scaleChanged = true;
+                    cnt++;
+                }
+            }
+        }
+        
+        if(scaleChanged)
+            ret.put("tf-scale_changed", String.valueOf(cnt));
     }
     
     //--Build transformation sheets
@@ -359,6 +421,7 @@ public class Agent {
         DidShapeChange(ret1, ret2, ret);
         AreAllShapesSame(ret1, ret2, ret);
         WasShapeFilled(ret1, ret2, ret);
+        WasShapeScaled(ret1, ret2, ret);
         
         for(Entry<String,String> entry: transformations.entrySet())
         {
@@ -410,6 +473,7 @@ public class Agent {
     }
 
     private void ExtractAttributes(RavensFigure figure, HashMap<String, String> ret, HashMap<String,String> realObjectMapping, Integer objNum) {
+        //.getObjects returns an arrayList
         for(RavensObject obj:figure.getObjects())
         {
             
@@ -430,6 +494,7 @@ public class Agent {
                 //String realName = (!realObjectMapping.isEmpty() && realObjectMapping.containsKey(obj.getName()))? realObjectMapping.get(obj.getName()):obj.getName();
                 ret.put(realName+"."+att.getName(), att.getValue());
             }
+            objNum++;
         }
     }
     
@@ -444,9 +509,13 @@ public class Agent {
         {
             //we will do the correlations by shape and size and use 1, 2, 3, etc for shape correlation
             for(RavensAttribute att :  obj.getAttributes()){
+                //first do correlation by shape and size
                 if(att.getName().toLowerCase().contains("shape") || att.getName().toLowerCase().contains("size")){
                     corrFig1.put(objNumber.toString()+"."+att.getName(), att.getValue());  //was obj.getName() for first one.
                     objNumber++;
+                //then do correlation by shape only
+                
+                //then do correlation by size only
                     
                 }
             }
