@@ -1,12 +1,12 @@
 package project2;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+//import java.util.ArrayList;
+//import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
+//import java.util.LinkedHashSet;
+//import java.util.List;
+//import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -162,9 +162,13 @@ public class Agent {
             println(i+"=>"+score_2[i]);
         }
         
+        println();
+        
         for(int i=0;i<finalscore.length;i++){
-            println(i+"=>"+score[i]);
+            println(i+"=>"+finalscore[i]);
         }
+        
+        
         
         int max = finalscore[0];
         int maxI = 0;
@@ -444,6 +448,8 @@ public class Agent {
         //WasShapeFilled(ret1, ret2, ret);
         WasShapeScaled(ret1, ret2, ret);
         Set<Entry<String, String>> transforms = transformations.entrySet();
+        //Loop through all of the big picture transformations: location, shape,
+        //fill, angle, etc.
         for(Entry<String,String> entry: transforms)
         {
             String prevEntry = null;
@@ -451,9 +457,10 @@ public class Agent {
             String key = entry.getKey();
             String value = entry.getValue();
             String[] tags = entry.getValue().split(",");
-            
+            //Then loop through all of the possibilities for those transformations.
             for (String tag : tags) {
-                for(Entry<String,String> retEntry : ret1.entrySet())
+                Set<Entry<String,String>> ret1EntrySet = ret1.entrySet();
+                for(Entry<String,String> retEntry : ret1EntrySet)
                 {
                     //If the transformation that you're looking for is there, and the second figure has the same one...
                     Boolean test = retEntry.getKey().trim().toLowerCase().contains(tag.toLowerCase());
@@ -461,12 +468,24 @@ public class Agent {
                     Boolean test2 = ret2.containsKey( test3);
                     if(test && test2)
                     {
-                        if(!retEntry.getValue().equals(ret2.get(retEntry.getKey())))
+                        String ret1EntryValue = retEntry.getValue();
+                        String ret1EntryKey = retEntry.getKey();
+                        String ret2Test = ret2.get(ret1EntryKey); 
+                        
+                        if(!ret1EntryValue.equals(ret2Test))
                         {
                             transform = entry.getKey();
                             //transformValue = retEntry.getValue();
                             if(attributes.containsKey(transform))
                                 ret.put(transform, ret2.get(retEntry.getKey()) );
+                            else if (transform.equals("angle"))
+                            {
+                                Integer angle1 = Integer.parseInt(retEntry.getValue());
+                                Integer angle2 = Integer.parseInt(ret2.get(ret1EntryKey));
+                                Integer anglediff = angle1+angle2;
+                                if (anglediff > 359)anglediff = 360 - anglediff;
+                                ret.put("tf-"+transform, anglediff.toString());
+                            }
                             else
                                 ret.put("tf-"+transform, transform); //TODO: New frame needs to be created also
                             transform = null;
@@ -487,11 +506,20 @@ public class Agent {
         }
         ret.put("count_changed", ""+cnt);
         
+        int i = 20;
         for(Entry<String,String> entry : ret.entrySet())
         {
             println(entry.toString());
+            i--;
         }
+        
         println("**********");
+        while (i>0)
+        {
+            println();
+            i--;
+        }
+                
 
         return ret;
     }
