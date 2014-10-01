@@ -83,6 +83,7 @@ public class Agent {
         println();
         println("---------------PROBLEM:" + problem.getName() +"----------------");
         println();
+        //This just gets all of the figures from the problems
         RavensFigure figA = problem.getFigures().get("A");
         RavensFigure figB = problem.getFigures().get("B");
         RavensFigure figC = problem.getFigures().get("C");
@@ -96,10 +97,11 @@ public class Agent {
         problemName = problem.getName();
         
 //******************************DEBUG*********************************
-        String debugProblem = "2x2 Basic Problem 01";
+        String debugProblem = "2x2 Basic Problem 04";
         if (problem.getName().equals(debugProblem)){
 //******************************DEBUG*********************************
         //-- Stage 1
+        //verifyCorrelation returns HashMap<String,String> of ????????????
         HashMap<String,String> ObjectMapping = VerifyCorrelation(figA,figB);
         HashMap<String, String> ab = BuildComparisonSheet(figA, figB, new HashMap<String,String>());
         HashMap<String, String> c1 = BuildComparisonSheet(figC, fig1, ObjectMapping);
@@ -110,7 +112,8 @@ public class Agent {
         HashMap<String, String> c6 = BuildComparisonSheet(figC, fig6, ObjectMapping);
 
         int[] score = {0,0,0,0,0,0,0};
-        //int[] score_2 = {0,0,0,0,0,0,0};
+        int[] score_2 = {0,0,0,0,0,0,0};
+        int[] finalscore = {0,0,0,0,0,0,0};
         
         //--Stage 2 & 3
         score[1]+=ScoreFactSheets(ab, c1, "1");
@@ -134,14 +137,20 @@ public class Agent {
         
         
         //--Stage 2 & 3
-        score[1]+=ScoreFactSheets(ab_2, b1_2, "1");
-        score[2]+=ScoreFactSheets(ab_2, b2_2, "2");
-        score[3]+=ScoreFactSheets(ab_2, b3_2, "3");
-        score[4]+=ScoreFactSheets(ab_2, b4_2, "4");
-        score[5]+=ScoreFactSheets(ab_2, b5_2, "5");
-        score[6]+=ScoreFactSheets(ab_2, b6_2, "6");
+        score_2[1]+=ScoreFactSheets(ab_2, b1_2, "1");
+        score_2[2]+=ScoreFactSheets(ab_2, b2_2, "2");
+        score_2[3]+=ScoreFactSheets(ab_2, b3_2, "3");
+        score_2[4]+=ScoreFactSheets(ab_2, b4_2, "4");
+        score_2[5]+=ScoreFactSheets(ab_2, b5_2, "5");
+        score_2[6]+=ScoreFactSheets(ab_2, b6_2, "6");
             
         }
+        finalscore[1]= score[1] + score_2[1] ;
+        finalscore[2]= score[2] + score_2[2];
+        finalscore[3]= score[3] + score_2[3];
+        finalscore[4]= score[4] + score_2[4];
+        finalscore[5]= score[5] + score_2[5];
+        finalscore[6]= score[6] + score_2[6];
         
         //--Stage 4
         for(int i=0;i<score.length;i++){
@@ -149,15 +158,19 @@ public class Agent {
         }
         println();
         
-//        for(int i=0;i<score_2.length;i++){
-//            println(i+"=>"+score_2[i]);
-//        }
+        for(int i=0;i<score_2.length;i++){
+            println(i+"=>"+score_2[i]);
+        }
         
-        int max = score[0];
+        for(int i=0;i<finalscore.length;i++){
+            println(i+"=>"+score[i]);
+        }
+        
+        int max = finalscore[0];
         int maxI = 0;
-        for ( int i = 1; i < score.length; i++) {
-            if ( score[i] > max) {
-              max = score[i];
+        for ( int i = 1; i < finalscore.length; i++) {
+            if ( finalscore[i] > max) {
+              max = finalscore[i];
               maxI = i;
             }
         }
@@ -208,8 +221,12 @@ public class Agent {
             println(key+" : "+val1+" - "+cKey+" : "+val2);
             if(!key.contains("shape"))
             {
-                score+=(val1.equals(val2))?1:0;
-                if(debug.equals("Verbose"))System.out.println("*****Score increased******");
+                if (val1.equals(val2))
+                {
+                    score++;
+                    if(debug.equals("Verbose"))System.out.println("*****Score increased******");   
+                }
+                
                 
             }
             else 
@@ -222,7 +239,7 @@ public class Agent {
             }
         }
         
-        //--tie brakers galore --------------------
+        //--tie breakers galore --------------------
         int shapesInAnswer=0;
         int expectedCountOfNewObjects = 0;
         if(c.containsKey("tf-shpe_added"))
@@ -237,9 +254,10 @@ public class Agent {
             for(String key : o.keySet())
             {
                 //Most objects from C should be in answer except if shape changed from A -> B
-                if(key.contains("shape") && key.contains(num) && o.get(key).equals(shape) && !c.containsKey("tf-shpe_changed") ){
+                if(key.contains("shape") && key.contains(num) && o.get(key).equals(shape) && !c.containsKey("tf-shpe_changed") )
+                {
                     score++;
-                    if(debug.equals("Verbose"))System.out.println("*****Score increased******");
+                    if(debug.equals("Verbose"))System.out.println("***** shapes the same Score increased******");
                 }
                 
                 
@@ -250,7 +268,10 @@ public class Agent {
         
         //Amount of objects in answer should match qty objects in C less deleted objects
         if(shapesInAnswer == expectedCountOfNewObjects)
+        {
             score++;
+            if(debug.equals("Verbose"))System.out.println("*****shapesInAnswer = expected Score increased******");
+        }
         
         System.out.println();
         
@@ -420,10 +441,10 @@ public class Agent {
         
         DidShapeChange(ret1, ret2, ret);
         AreAllShapesSame(ret1, ret2, ret);
-        WasShapeFilled(ret1, ret2, ret);
+        //WasShapeFilled(ret1, ret2, ret);
         WasShapeScaled(ret1, ret2, ret);
-        
-        for(Entry<String,String> entry: transformations.entrySet())
+        Set<Entry<String, String>> transforms = transformations.entrySet();
+        for(Entry<String,String> entry: transforms)
         {
             String prevEntry = null;
             String transform = null;
@@ -434,8 +455,11 @@ public class Agent {
             for (String tag : tags) {
                 for(Entry<String,String> retEntry : ret1.entrySet())
                 {
-                    //If they both contain the same tag
-                    if(retEntry.getKey().trim().toLowerCase().contains(tag.toLowerCase()) && ret2.containsKey( retEntry.getKey()))
+                    //If the transformation that you're looking for is there, and the second figure has the same one...
+                    Boolean test = retEntry.getKey().trim().toLowerCase().contains(tag.toLowerCase());
+                    String test3 = retEntry.getKey();
+                    Boolean test2 = ret2.containsKey( test3);
+                    if(test && test2)
                     {
                         if(!retEntry.getValue().equals(ret2.get(retEntry.getKey())))
                         {
