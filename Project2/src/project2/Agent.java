@@ -202,16 +202,17 @@ public class Agent {
     }
     
     //--Used to score the transformation knowledge sheets
-    private double ScoreFactSheets(HashMap<String, String> c, HashMap<String, String> o, String num)
+    private double ScoreFactSheets(HashMap<String, String> fromTrans, HashMap<String, String> toTrans, String num)
     {
+        int iformatting = 20;
     	String debug = "Verbose";
     	
         double score = 0;
         HashSet<String> ShapesInC = new HashSet<>();
         int shapesInCQty = 0;
-        int countChanged = Integer.valueOf(c.containsKey("count_changed")?c.get("count_changed"):"0");
+        int countChanged = Integer.valueOf(fromTrans.containsKey("count_changed")?fromTrans.get("count_changed"):"0");
         
-        for(String key : c.keySet())
+        for(String key : fromTrans.keySet())
         {
             
             //match keys:values from both transformation sheets without matching shape
@@ -220,15 +221,17 @@ public class Agent {
             String objKey = (key.split("\\.")[0].equals("A"))?"C":num;
             String exactKey = key.replaceFirst("\\w\\.", "");
             String cKey = exactKey.contains(".")?objKey+"."+exactKey:exactKey;
-            String val1 = c.get(key);
-            String val2 = (o.containsKey(cKey))?o.get(cKey):null;
+            String val1 = fromTrans.get(key);
+            String val2 = (toTrans.containsKey(cKey))?toTrans.get(cKey):null;
             println(key+" : "+val1+" - "+cKey+" : "+val2);
+            iformatting--;
             if(!key.contains("shape"))
             {
                 if (val1.equals(val2))
                 {
                     score++;
-                    if(debug.equals("Verbose"))System.out.println("*****Score increased******");   
+                    if(debug.equals("Verbose"))System.out.println("*****Score increased******");
+                    iformatting--;
                 }
                 
                 
@@ -246,22 +249,23 @@ public class Agent {
         //--tie breakers galore --------------------
         int shapesInAnswer=0;
         int expectedCountOfNewObjects = 0;
-        if(c.containsKey("tf-shpe_added"))
+        if(fromTrans.containsKey("tf-shpe_added"))
             expectedCountOfNewObjects = shapesInCQty + Math.abs(countChanged);
-        else if (c.containsKey("tf-shpe_deleted"))
+        else if (fromTrans.containsKey("tf-shpe_deleted"))
             expectedCountOfNewObjects = shapesInCQty - Math.abs(countChanged);
        
         System.out.println("Expected Objects: "+expectedCountOfNewObjects);
         for(String shape:ShapesInC)
         {
             shapesInAnswer=0;
-            for(String key : o.keySet())
+            for(String key : toTrans.keySet())
             {
                 //Most objects from C should be in answer except if shape changed from A -> B
-                if(key.contains("shape") && key.contains(num) && o.get(key).equals(shape) && !c.containsKey("tf-shpe_changed") )
+                if(key.contains("shape") && key.contains(num) && toTrans.get(key).equals(shape) && !fromTrans.containsKey("tf-shpe_changed") )
                 {
                     score++;
                     if(debug.equals("Verbose"))System.out.println("***** shapes the same Score increased******");
+                    iformatting--;
                 }
                 
                 
@@ -269,15 +273,58 @@ public class Agent {
                     shapesInAnswer++;
             }
         }
-        
+        //for 2x2 matrices, check for symmetry of rotations if all 4, extra point.
+        if(fromTrans.containsKey("tf-angle")&& toTrans.containsKey("tf-angle"))
+        { 
+            //get all of the angles of rotation
+            int angles[] = {-1,-1,-1,-1};
+            int i = 0;
+            for (Entry<String,String> entry : fromTrans.entrySet())
+            {
+                if (entry.getKey().endsWith(".angle"))
+                        {
+                           String key = entry.getKey();
+                           angles[i] = Integer.parseInt(fromTrans.get(key));
+                           i++;
+                        }
+            }
+            for (Entry<String,String> entry : toTrans.entrySet())
+            {
+                if (entry.getKey().endsWith(".angle"))
+                        {
+                           String key = entry.getKey();
+                           angles[i] = Integer.parseInt(toTrans.get(key));
+                           i++;
+                        }
+            }
+            int angleSum = 0;
+            for(int x=0;x<i;x++)
+            {
+                
+                angleSum += angles[x];
+            }
+            if (angleSum ==(90+180+270))
+            {
+                score++;
+                if(debug.equals("Verbose"))System.out.println("*****rotation sym Score increased******");
+                iformatting--;
+            }
+                
+            
+                
+        }
         //Amount of objects in answer should match qty objects in C less deleted objects
         if(shapesInAnswer == expectedCountOfNewObjects)
         {
             score++;
             if(debug.equals("Verbose"))System.out.println("*****shapesInAnswer = expected Score increased******");
+            iformatting--;
         }
-        
+        while (iformatting >0)
+        {
         System.out.println();
+        iformatting--;
+        }
         
         return score;
     
@@ -395,6 +442,7 @@ public class Agent {
     //--Build transformation sheets
     private HashMap<String,String> BuildComparisonSheet(RavensFigure figure1, RavensFigure figure2, HashMap<String,String> ObjectMapping)
     {
+        int iformatting = 20;
         HashMap<String,String> ret = new HashMap<>();
         HashMap<String,String> ret1 = new HashMap<>();
         HashMap<String,String> ret2 = new HashMap<>();
@@ -618,9 +666,5 @@ public class Agent {
         }
         
         return ret;
-    }
-
-    
-
-    
+    }   
 }

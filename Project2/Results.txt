@@ -39,7 +39,7 @@
 2x2 Basic Problem 01: 0 Incorrect (Correct Answer: 5)
 2x2 Basic Problem 02: 0 Incorrect (Correct Answer: 3)
 2x2 Basic Problem 03: 0 Incorrect (Correct Answer: 1)
-2x2 Basic Problem 04: 2 Incorrect (Correct Answer: 4)
+2x2 Basic Problem 04: 4 Correct (Correct Answer: 4)
 2x2 Basic Problem 05: 0 Incorrect (Correct Answer: 1)
 2x2 Basic Problem 06: 0 Incorrect (Correct Answer: 3)
 2x2 Basic Problem 07: 0 Incorrect (Correct Answer: 5)
