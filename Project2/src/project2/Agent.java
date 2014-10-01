@@ -2,6 +2,7 @@ package project2;
 
 //import java.util.ArrayList;
 //import java.util.Arrays;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 //import java.util.LinkedHashSet;
@@ -37,6 +38,7 @@ public class Agent {
     HashMap<String,String> attributes = new HashMap<>();
     HashMap<String,Double> transformationScore = new HashMap<>();
     String problemName;
+    Integer iFormat;
     
     public Agent() {
         transformations.put("scaled","size");
@@ -50,6 +52,8 @@ public class Agent {
         transformationScore.put("angle", 1.0);
         transformationScore.put("fill", 1.0);
         transformationScore.put("location", 1.0);
+        iFormat = 16;
+        
         
         
     }
@@ -97,7 +101,7 @@ public class Agent {
         problemName = problem.getName();
         
 //******************************DEBUG*********************************
-        String debugProblem = "2x2 Basic Problem 04";
+        String debugProblem = "2x2 Basic Problem 05";
         if (problem.getName().equals(debugProblem)){
 //******************************DEBUG*********************************
         //-- Stage 1
@@ -204,7 +208,7 @@ public class Agent {
     //--Used to score the transformation knowledge sheets
     private double ScoreFactSheets(HashMap<String, String> fromTrans, HashMap<String, String> toTrans, String num)
     {
-        int iformatting = 20;
+        int iformatting = iFormat;
     	String debug = "Verbose";
     	
         double score = 0;
@@ -246,7 +250,7 @@ public class Agent {
             }
         }
         
-        //--tie breakers galore --------------------
+        //--tie breakers  --------------------
         int shapesInAnswer=0;
         int expectedCountOfNewObjects = 0;
         if(fromTrans.containsKey("tf-shpe_added"))
@@ -277,33 +281,38 @@ public class Agent {
         if(fromTrans.containsKey("tf-angle")&& toTrans.containsKey("tf-angle"))
         { 
             //get all of the angles of rotation
-            int angles[] = {-1,-1,-1,-1};
+            Integer[] angles = {360,360,360,360,360,360,360,360,360,360,360,360,360,360,360,360};
             int i = 0;
-            for (Entry<String,String> entry : fromTrans.entrySet())
+            //do if for each object, first figure out how many object there are total.
+            Integer x = 0;
+            Set<String> fromTranskeySet = fromTrans.keySet();
+            String findstring = "."+x.toString()+".";
+            while (fromTranskeySet.contains(findstring))
             {
-                if (entry.getKey().endsWith(".angle"))
-                        {
-                           String key = entry.getKey();
-                           angles[i] = Integer.parseInt(fromTrans.get(key));
-                           i++;
-                        }
+                x++;
             }
-            for (Entry<String,String> entry : toTrans.entrySet())
-            {
-                if (entry.getKey().endsWith(".angle"))
-                        {
-                           String key = entry.getKey();
-                           angles[i] = Integer.parseInt(toTrans.get(key));
-                           i++;
-                        }
-            }
-            int angleSum = 0;
-            for(int x=0;x<i;x++)
-            {
-                
-                angleSum += angles[x];
-            }
-            if (angleSum ==(90+180+270))
+            int numObjects = x;
+                for (Entry<String,String> entry : fromTrans.entrySet())
+                {
+                    if (entry.getKey().endsWith(".angle"))
+                            {
+                               String key = entry.getKey();
+                               angles[i] = Integer.parseInt(fromTrans.get(key));
+                               i++;
+                            }
+                }
+                for (Entry<String,String> entry : toTrans.entrySet())
+                {
+                    if (entry.getKey().endsWith(".angle"))
+                            {
+                               String key = entry.getKey();
+                               String sAngle = toTrans.get(key);
+                               angles[i] = Integer.parseInt(sAngle);
+                               i++;
+                            }
+                }
+            Arrays.sort(angles, 0, 4);
+            if (((angles[0]+90) == angles[1]) && ((angles[1]+90) == angles[2]) && ((angles[2]+90) == angles[3]))
             {
                 score++;
                 if(debug.equals("Verbose"))System.out.println("*****rotation sym Score increased******");
@@ -313,6 +322,7 @@ public class Agent {
             
                 
         }
+    
         //Amount of objects in answer should match qty objects in C less deleted objects
         if(shapesInAnswer == expectedCountOfNewObjects)
         {
@@ -442,7 +452,7 @@ public class Agent {
     //--Build transformation sheets
     private HashMap<String,String> BuildComparisonSheet(RavensFigure figure1, RavensFigure figure2, HashMap<String,String> ObjectMapping)
     {
-        int iformatting = 20;
+        int iformatting = iFormat;
         HashMap<String,String> ret = new HashMap<>();
         HashMap<String,String> ret1 = new HashMap<>();
         HashMap<String,String> ret2 = new HashMap<>();
@@ -482,9 +492,28 @@ public class Agent {
         ExtractAttributes(figure1, ret1, realObjectMappingFig1, objNum);
         ExtractAttributes(figure2, ret2, realObjectMappingFig2, objNum);
         
+        Integer maxsize;
+        Integer minsize;
         
         int cnt = figure2.getObjects().size() - figure1.getObjects().size();
-        
+        if (cnt == 0)
+        {
+            maxsize = figure1.getObjects().size();
+            minsize = maxsize;
+        }
+        else if (cnt>0)
+        {
+            maxsize = figure2.getObjects().size();
+            minsize = figure1.getObjects().size();
+        }
+        else
+        {
+            maxsize = figure1.getObjects().size();
+            minsize = figure2.getObjects().size();
+        }
+        ret.put("maxsize",maxsize.toString());
+        ret.put("minsize", minsize.toString());
+               
         //Determine if shapes were added or removed
         if(figure2.getObjects().size() > figure1.getObjects().size())
             ret.put("tf-shpe_added", "1");
@@ -554,7 +583,7 @@ public class Agent {
         }
         ret.put("count_changed", ""+cnt);
         
-        int i = 20;
+        int i = iFormat;
         for(Entry<String,String> entry : ret.entrySet())
         {
             println(entry.toString());
