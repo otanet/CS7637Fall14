@@ -37,3 +37,7 @@ Icon
 .Trashes
 /Project2/nbproject/private/
 /Project2/build/
+*.TXT
+/Project2/bin
+/Project1/bin
+*.jar
