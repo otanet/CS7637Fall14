@@ -52,7 +52,7 @@ public class Agent {
         transformationScore.put("angle", 1.0);
         transformationScore.put("fill", 1.0);
         transformationScore.put("location", 1.0);
-        iFormat = 16;
+        iFormat = 18;
         
         
         
@@ -101,8 +101,8 @@ public class Agent {
         problemName = problem.getName();
         
 //******************************DEBUG*********************************
-        String debugProblem = "2x2 Basic Problem 05";
-        if (problem.getName().equals(debugProblem)){
+      //  String debugProblem = "2x2 Basic Problem 04";
+      //  if (problem.getName().equals(debugProblem)){
 //******************************DEBUG*********************************
         //-- Stage 1
         //verifyCorrelation returns HashMap<String,String> of ????????????
@@ -187,7 +187,7 @@ public class Agent {
         answer = String.valueOf(maxI);
         println("Answer: "+answer);
 //******************************DEBUG*********************************
-        }//For debugging purposes
+     //   }//For debugging purposes
 //******************************DEBUG*********************************
         String correctAnswer = problem.checkAnswer(answer);
         System.out.println("The correct answer is: "+ correctAnswer);
@@ -229,7 +229,7 @@ public class Agent {
             String val2 = (toTrans.containsKey(cKey))?toTrans.get(cKey):null;
             println(key+" : "+val1+" - "+cKey+" : "+val2);
             iformatting--;
-            if(!key.contains("shape"))
+            if(!key.contains("shape") && !key.contains("minsize") && !key.contains("maxsize"))
             {
                 if (val1.equals(val2))
                 {
@@ -278,10 +278,10 @@ public class Agent {
             }
         }
         //for 2x2 matrices, check for symmetry of rotations if all 4, extra point.
-        if(fromTrans.containsKey("tf-angle")&& toTrans.containsKey("tf-angle"))
+        if(fromTrans.containsKey("tf-diff-angle")&& toTrans.containsKey("tf-diff-angle"))
         { 
             //get all of the angles of rotation
-            Integer[] angles = {360,360,360,360,360,360,360,360,360,360,360,360,360,360,360,360};
+            Integer[] angles = {360,360,360,360,360,360,360,360,360,360,360,360,360,360,360,360,360,360,360};
             int i = 0;
             //do if for each object, first figure out how many object there are total.
             Integer x = 0;
@@ -314,6 +314,7 @@ public class Agent {
             Arrays.sort(angles, 0, 4);
             if (((angles[0]+90) == angles[1]) && ((angles[1]+90) == angles[2]) && ((angles[2]+90) == angles[3]))
             {
+                score++;
                 score++;
                 if(debug.equals("Verbose"))System.out.println("*****rotation sym Score increased******");
                 iformatting--;
@@ -559,9 +560,9 @@ public class Agent {
                             {
                                 Integer angle1 = Integer.parseInt(retEntry.getValue());
                                 Integer angle2 = Integer.parseInt(ret2.get(ret1EntryKey));
-                                Integer anglediff = angle1+angle2;
+                                Integer anglediff = angle2 - angle1;
                                 if (anglediff > 359)anglediff = 360 - anglediff;
-                                ret.put("tf-"+transform, anglediff.toString());
+                                ret.put("tf-diff-"+transform, anglediff.toString());
                             }
                             else
                                 ret.put("tf-"+transform, transform); //TODO: New frame needs to be created also
