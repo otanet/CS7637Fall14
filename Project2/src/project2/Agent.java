@@ -101,8 +101,8 @@ public class Agent {
         problemName = problem.getName();
         
 //******************************DEBUG*********************************
-       // String debugProblem = "2x2 Basic Problem 08";
-       // if (problem.getName().equals(debugProblem)){
+        String debugProblem = "2x2 Basic Problem 08";
+        if (problem.getName().equals(debugProblem)){
 //******************************DEBUG*********************************
         //-- Stage 1
         //verifyCorrelation returns HashMap<String,String> of ????????????
@@ -187,7 +187,7 @@ public class Agent {
         answer = String.valueOf(maxI);
         println("Answer: "+answer);
 //******************************DEBUG*********************************
-    //    }//For debugging purposes
+        }//For debugging purposes
 //******************************DEBUG*********************************
         String correctAnswer = problem.checkAnswer(answer);
         System.out.println("The correct answer is: "+ correctAnswer);
