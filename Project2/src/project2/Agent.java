@@ -52,7 +52,7 @@ public class Agent {
         transformationScore.put("angle", 1.0);
         transformationScore.put("fill", 1.0);
         transformationScore.put("location", 1.0);
-        iFormat = 18;
+        iFormat = 35;
         
         
         
@@ -101,8 +101,8 @@ public class Agent {
         problemName = problem.getName();
         
 //******************************DEBUG*********************************
-        String debugProblem = "2x2 Basic Problem 08";
-        if (problem.getName().equals(debugProblem)){
+       // String debugProblem = "2x2 Basic Problem 08";
+       // if (problem.getName().equals(debugProblem)){
 //******************************DEBUG*********************************
         //-- Stage 1
         //verifyCorrelation returns HashMap<String,String> of ????????????
@@ -187,7 +187,7 @@ public class Agent {
         answer = String.valueOf(maxI);
         println("Answer: "+answer);
 //******************************DEBUG*********************************
-        }//For debugging purposes
+    //    }//For debugging purposes
 //******************************DEBUG*********************************
         String correctAnswer = problem.checkAnswer(answer);
         System.out.println("The correct answer is: "+ correctAnswer);
@@ -229,7 +229,7 @@ public class Agent {
             String val2 = (toTrans.containsKey(cKey))?toTrans.get(cKey):null;
             println(key+" : "+val1+" - "+cKey+" : "+val2);
             iformatting--;
-            if(!key.contains("shape") && !key.contains("minsize") && !key.contains("maxsize"))
+            if(!key.contains("shape") && !key.contains("minsize") && !key.contains("maxsize") && !key.contains(".angle"))
             {
                 if (val1.equals(val2))
                 {
@@ -381,7 +381,7 @@ public class Agent {
         ret.put("tf-same_shpe_fig2", String.valueOf(shapeSame));
     }
     
-    private void DidShapeChange(HashMap<String,String> ret1, HashMap<String,String> ret2, HashMap<String,String> ret)
+    private void DidShapeChange(HashMap<String,String> ret1, HashMap<String,String> ret2, HashMap<String,String> ret, String fixedShape)
     {
         boolean shapeChanged = false;
         int cnt = 0;
@@ -398,6 +398,10 @@ public class Agent {
                     {
                         shapeChanged = true;
                         cnt++;
+                    }
+                    else
+                    {
+                        fixedShape = shapeRet1;
                     }
                 }
             }
@@ -448,6 +452,42 @@ public class Agent {
         
         if(scaleChanged)
             ret.put("tf-scale_changed", String.valueOf(cnt));
+    }
+    
+        private void AreShapesSymmetric(HashMap<String,String> ret1, HashMap<String,String> ret2, HashMap<String,String> ret, Integer sym[])
+    {
+        boolean shapeChanged = false;
+        int cnt = 0;
+        int index = 0;
+        for(String entry : ret1.keySet())
+        {
+            if (entry.toLowerCase().contains("shape"))
+            {
+                //We just want the key attribute
+                String shapeRet1 = ret1.get(entry);
+                String shapeRet2 = (ret1.containsKey(entry)) ?ret2.get(entry):"";
+                if (shapeRet2 != null)
+                {
+                    if(!shapeRet1.equals(shapeRet2))
+                    {
+                        shapeChanged = true;
+                        cnt++;
+                        index++;
+                    }
+                    else
+                    {
+                        //The shapes are equal, now let's build the symmetry matrix
+                        if (shapeRet1.equals("square")
+                                || shapeRet1.equals("plus"))
+                        {
+                            sym[index] = 1;
+                            index++;
+                        }
+                                    
+                    }
+                }
+            }
+        }
     }
     
     //--Build transformation sheets
@@ -520,17 +560,19 @@ public class Agent {
             ret.put("tf-shpe_added", "1");
         else if(figure2.getObjects().size() < figure1.getObjects().size())
             ret.put("tf-shpe_deleted", "1");
-        
-        DidShapeChange(ret1, ret2, ret);
+        String fixedShape = null;
+        DidShapeChange(ret1, ret2, ret, fixedShape);
         AreAllShapesSame(ret1, ret2, ret);
         //WasShapeFilled(ret1, ret2, ret);
         WasShapeScaled(ret1, ret2, ret);
+        Integer[] sym = {0,0,0,0,0,0,0};
+        AreShapesSymmetric(ret1,ret2,ret,sym);
         Set<Entry<String, String>> transforms = transformations.entrySet();
         //Loop through all of the big picture transformations: location, shape,
         //fill, angle, etc.
         for(Entry<String,String> entry: transforms)
         {
-            String prevEntry = null;
+
             String transform = null;
             String key = entry.getKey();
             String value = entry.getValue();
@@ -550,7 +592,7 @@ public class Agent {
                         String ret1EntryKey = retEntry.getKey();
                         String ret2Test = ret2.get(ret1EntryKey); 
                         
-                        if(!ret1EntryValue.equals(ret2Test))
+                        if(!ret1EntryValue.equals(ret2Test)||tag.trim().toLowerCase().equals("angle"))
                         {
                             transform = entry.getKey();
                             //transformValue = retEntry.getValue();
@@ -558,11 +600,24 @@ public class Agent {
                                 ret.put(transform, ret2.get(retEntry.getKey()) );
                             else if (transform.equals("angle"))
                             {
+                                //pull of the shape number so that we can see what the symmetry is
+                                Integer shapeIndex = Integer.parseInt(retEntry.getKey().split("\\.")[0]);
                                 Integer angle1 = Integer.parseInt(retEntry.getValue());
                                 Integer angle2 = Integer.parseInt(ret2.get(ret1EntryKey));
                                 Integer anglediff = angle2 - angle1;
                                 if (anglediff > 359)anglediff = 360 - anglediff;
-                                ret.put("tf-diff-"+transform, anglediff.toString());
+                                if(sym[shapeIndex]==1)
+                                {
+                                    //this assumes that the shapes are the same from one to the other and that they 
+                                    //are symmetrical such that any change >90 is not seen.
+                                    if (anglediff < 0 ) anglediff = Math.abs(anglediff);
+                                    while(anglediff>45)
+                                        anglediff = anglediff - 90;
+       
+                                }
+                                
+
+                                ret.put("tf-diff-"+transform, anglediff.toString()+"."+shapeIndex.toString());
                             }
                             else
                                 ret.put("tf-"+transform, transform); //TODO: New frame needs to be created also
