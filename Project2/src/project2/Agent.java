@@ -41,10 +41,11 @@ public class Agent {
     Integer iFormat;
     
     public Agent() {
+        transformations.put("location","above,inside,under,below,left,right,left-of,right-of");
         transformations.put("scaled","size");
         transformations.put("angle","angle");
         transformations.put("fill","fill");
-        transformations.put("location","above,inside,under,below,left,right,left-of,right-of");
+        
         
         attributes.put("fill","fill");
         
@@ -101,7 +102,7 @@ public class Agent {
         problemName = problem.getName();
         
 //******************************DEBUG*********************************
-        String debugProblem = "2x2 Basic Problem 08";
+        String debugProblem = "2x2 Basic Problem 09";
         if (problem.getName().equals(debugProblem)){
 //******************************DEBUG*********************************
         //-- Stage 1
@@ -227,6 +228,10 @@ public class Agent {
             String cKey = exactKey.contains(".")?objKey+"."+exactKey:exactKey;
             String val1 = fromTrans.get(key);
             String val2 = (toTrans.containsKey(cKey))?toTrans.get(cKey):null;
+            if (exactKey.equals("tf-diff-angle"))
+                    {
+                      val2 = (toTrans.containsKey(key))?toTrans.get(key):null;  
+                    }
             println(key+" : "+val1+" - "+cKey+" : "+val2);
             iformatting--;
             if(!key.contains("shape") && !key.contains("minsize") && !key.contains("maxsize") && !key.contains(".angle"))
@@ -278,7 +283,9 @@ public class Agent {
             }
         }
         //for 2x2 matrices, check for symmetry of rotations if all 4, extra point.
-        if(fromTrans.containsKey("tf-diff-angle")&& toTrans.containsKey("tf-diff-angle"))
+        if((fromTrans.containsKey("0.tf-diff-angle")&& toTrans.containsKey("0.tf-diff-angle"))||
+               (fromTrans.containsKey("1.tf-diff-angle")&& toTrans.containsKey("1.tf-diff-angle"))||
+                (fromTrans.containsKey("2.tf-diff-angle")&& toTrans.containsKey("2.tf-diff-angle")))
         { 
             //get all of the angles of rotation
             Integer[] angles = {360,360,360,360,360,360,360,360,360,360,360,360,360,360,360,360,360,360,360};
@@ -617,7 +624,7 @@ public class Agent {
                                 }
                                 
 
-                                ret.put("tf-diff-"+transform, anglediff.toString()+"."+shapeIndex.toString());
+                                ret.put(shapeIndex.toString()+ ".tf-diff-"+transform, anglediff.toString());
                             }
                             else
                                 ret.put("tf-"+transform, transform); //TODO: New frame needs to be created also
