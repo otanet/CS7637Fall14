@@ -10,7 +10,7 @@
  * 
  */
 
-package project2;
+package project1;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,7 +24,7 @@ import java.util.ArrayList;
  * project will be graded using our own version of this file.
  * 
  */
-public class Project2 {
+public class Project1 {
     /**
      * The main method of Project2.
      */

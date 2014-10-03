@@ -41,3 +41,7 @@ Icon
 /Project2/bin
 /Project1/bin
 *.jar
+/JavaProject1/nbproject/private/
+/AngelinaKelly/nbproject/private/
+/SethHenneman/nbproject/private/
+/SethHenneman/build/
