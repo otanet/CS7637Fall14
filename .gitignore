@@ -37,7 +37,6 @@ Icon
 .Trashes
 /Project2/nbproject/private/
 /Project2/build/
-*.TXT
 /Project2/bin
 /Project1/bin
 *.jar
@@ -48,7 +47,7 @@ Icon
 SethHenneman/nbproject/private/private.properties
 
 AngelinaKelly/nbproject/private/private.properties
-/project3/nbproject/private/
+/project3/nbproject/
 /project3/build/
 *.xml
 
