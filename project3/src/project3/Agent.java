@@ -92,6 +92,11 @@ public class Agent {
         RavensFigure figA = problem.getFigures().get("A");
         RavensFigure figB = problem.getFigures().get("B");
         RavensFigure figC = problem.getFigures().get("C");
+        RavensFigure figD = problem.getFigures().get("D");
+        RavensFigure figE = problem.getFigures().get("E");
+        RavensFigure figF = problem.getFigures().get("F");
+        RavensFigure figG = problem.getFigures().get("G");
+        RavensFigure figH = problem.getFigures().get("H");
         RavensFigure fig1 = problem.getFigures().get("1");
         RavensFigure fig2 = problem.getFigures().get("2");
         RavensFigure fig3 = problem.getFigures().get("3");
@@ -107,37 +112,38 @@ public class Agent {
 //******************************DEBUG*********************************
         //-- Stage 1
         //verifyCorrelation returns HashMap<String,String> of ????????????
-        HashMap<String,String> ObjectMapping = VerifyCorrelation(figA,figB);
-        HashMap<String, String> ab = BuildComparisonSheet(figA, figB, new HashMap<String,String>());
-        HashMap<String, String> c1 = BuildComparisonSheet(figC, fig1, ObjectMapping);
-        HashMap<String, String> c2 = BuildComparisonSheet(figC, fig2, ObjectMapping);
-        HashMap<String, String> c3 = BuildComparisonSheet(figC, fig3, ObjectMapping);
-        HashMap<String, String> c4 = BuildComparisonSheet(figC, fig4, ObjectMapping);
-        HashMap<String, String> c5 = BuildComparisonSheet(figC, fig5, ObjectMapping);
-        HashMap<String, String> c6 = BuildComparisonSheet(figC, fig6, ObjectMapping);
+        //HashMap<String,String> ObjectMapping = VerifyCorrelation(figA,figB);
+        HashMap<String, String> ab = BuildComparisonSheet(figA, figB);// new HashMap<String,String>());
+        HashMap<String, String> bc = BuildComparisonSheet(figB, figC); // ObjectMapping);
+        HashMap<String, String> de = BuildComparisonSheet(figD, figE);// ObjectMapping);
+        HashMap<String, String> ef = BuildComparisonSheet(figE, figF);//, ObjectMapping);
+        HashMap<String, String> gh = BuildComparisonSheet(figG, figH);//, ObjectMapping);
+        HashMap<String, String> h1 = BuildComparisonSheet(figH, fig1);// ObjectMapping);
+        HashMap<String, String> h2 = BuildComparisonSheet(figH, fig2);// ObjectMapping);
+        HashMap<String, String> h3 = BuildComparisonSheet(figH, fig3);// ObjectMapping);
 
         int[] score = {0,0,0,0,0,0,0};
         int[] score_2 = {0,0,0,0,0,0,0};
         int[] finalscore = {0,0,0,0,0,0,0};
         
         //--Stage 2 & 3
-        score[1]+=ScoreFactSheets(ab, c1, "1");
-        score[2]+=ScoreFactSheets(ab, c2, "2");
-        score[3]+=ScoreFactSheets(ab, c3, "3");
-        score[4]+=ScoreFactSheets(ab, c4, "4");
-        score[5]+=ScoreFactSheets(ab, c5, "5");
-        score[6]+=ScoreFactSheets(ab, c6, "6");
+        score[1]+=ScoreFactSheets(ab, bc, "1");
+        score[2]+=ScoreFactSheets(ab, bc, "2");
+        score[3]+=ScoreFactSheets(ab, bc, "3");
+        score[4]+=ScoreFactSheets(ab, bc, "4");
+        score[5]+=ScoreFactSheets(ab, bc, "5");
+        score[6]+=ScoreFactSheets(ab, bc, "6");
         
         if (problem.getProblemType().equals("2x2"))
         {
-        ObjectMapping = VerifyCorrelation(figA,figC);
-        HashMap<String, String> ab_2 = BuildComparisonSheet(figA, figC, new HashMap<String,String>());
-        HashMap<String, String> b1_2 = BuildComparisonSheet(figB, fig1, ObjectMapping);
-        HashMap<String, String> b2_2 = BuildComparisonSheet(figB, fig2, ObjectMapping);
-        HashMap<String, String> b3_2 = BuildComparisonSheet(figB, fig3, ObjectMapping);
-        HashMap<String, String> b4_2 = BuildComparisonSheet(figB, fig4, ObjectMapping);
-        HashMap<String, String> b5_2 = BuildComparisonSheet(figB, fig5, ObjectMapping);
-        HashMap<String, String> b6_2 = BuildComparisonSheet(figB, fig6, ObjectMapping);
+        //ObjectMapping = VerifyCorrelation(figA,figC);
+        HashMap<String, String> ab_2 = BuildComparisonSheet(figA, figC);// new HashMap<String,String>());
+        HashMap<String, String> b1_2 = BuildComparisonSheet(figB, fig1);// ObjectMapping);
+        HashMap<String, String> b2_2 = BuildComparisonSheet(figB, fig2);//, ObjectMapping);
+        HashMap<String, String> b3_2 = BuildComparisonSheet(figB, fig3);//, ObjectMapping);
+        HashMap<String, String> b4_2 = BuildComparisonSheet(figB, fig4);//, ObjectMapping);
+        HashMap<String, String> b5_2 = BuildComparisonSheet(figB, fig5);//, ObjectMapping);
+        HashMap<String, String> b6_2 = BuildComparisonSheet(figB, fig6);//, ObjectMapping);
 
         
         
@@ -498,7 +504,7 @@ public class Agent {
     }
     
     //--Build transformation sheets
-    private HashMap<String,String> BuildComparisonSheet(RavensFigure figure1, RavensFigure figure2, HashMap<String,String> ObjectMapping)
+    private HashMap<String,String> BuildComparisonSheet(RavensFigure figure1, RavensFigure figure2)//HashMap<String,String> ObjectMapping)
     {
         int iformatting = iFormat;
         HashMap<String,String> ret = new HashMap<>();
@@ -506,35 +512,35 @@ public class Agent {
         HashMap<String,String> ret2 = new HashMap<>();
         
         HashMap<String,String> realObjectMappingFig1 = new HashMap<>();
-        if(!ObjectMapping.isEmpty() ){
-            for(Entry<String,String> entry : ObjectMapping.entrySet()){
-                String size = entry.getValue();
-                for(RavensObject obj:figure1.getObjects())
-                {
-                    for(RavensAttribute att :  obj.getAttributes()){
-                        if(att.getName().toLowerCase().contains("size") && att.getValue().equals(size)){
-                            realObjectMappingFig1.put(obj.getName(), entry.getKey().split("\\.")[0]);
-                        }
-                    }
-
-                }
-            }
-        }
+//        if(!ObjectMapping.isEmpty() ){
+//            for(Entry<String,String> entry : ObjectMapping.entrySet()){
+//                String size = entry.getValue();
+//                for(RavensObject obj:figure1.getObjects())
+//                {
+//                    for(RavensAttribute att :  obj.getAttributes()){
+//                        if(att.getName().toLowerCase().contains("size") && att.getValue().equals(size)){
+//                            realObjectMappingFig1.put(obj.getName(), entry.getKey().split("\\.")[0]);
+//                        }
+//                    }
+//
+//                }
+//            }
+//        }
         HashMap<String,String> realObjectMappingFig2 = new HashMap<>();
-        if(!ObjectMapping.isEmpty() ){
-            for(Entry<String,String> entry : ObjectMapping.entrySet()){
-                String size = entry.getValue();
-                for(RavensObject obj:figure2.getObjects())
-                {
-                    for(RavensAttribute att :  obj.getAttributes()){
-                        if(att.getName().toLowerCase().contains("size") && att.getValue().equals(size)){
-                            realObjectMappingFig2.put(obj.getName(), entry.getKey().split("\\.")[0]);
-                        }
-                    }
-
-                }
-            }
-        }
+//        if(!ObjectMapping.isEmpty() ){
+//            for(Entry<String,String> entry : ObjectMapping.entrySet()){
+//                String size = entry.getValue();
+//                for(RavensObject obj:figure2.getObjects())
+//                {
+//                    for(RavensAttribute att :  obj.getAttributes()){
+//                        if(att.getName().toLowerCase().contains("size") && att.getValue().equals(size)){
+//                            realObjectMappingFig2.put(obj.getName(), entry.getKey().split("\\.")[0]);
+//                        }
+//                    }
+//
+//                }
+//            }
+//        }
         
         Integer objNum = 0;
         ExtractAttributes(figure1, ret1, realObjectMappingFig1, objNum);
