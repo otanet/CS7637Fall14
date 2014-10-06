@@ -48,3 +48,8 @@ Icon
 SethHenneman/nbproject/private/private.properties
 
 AngelinaKelly/nbproject/private/private.properties
+/project3/nbproject/private/
+/project3/build/
+*.xml
+
+*.properties
