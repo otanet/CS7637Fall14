@@ -42,13 +42,15 @@ Icon
 *.jar
 /JavaProject1/nbproject/private/
 /AngelinaKelly/nbproject/private/
+/AngelinaKelly/build/
+/AngelinaKelly/dist/
 /SethHenneman/nbproject/private/
 /SethHenneman/build/
 SethHenneman/nbproject/private/private.properties
 
 AngelinaKelly/nbproject/private/private.properties
-/project3/nbproject/
-/project3/build/
+/project3/
+/project3/
 *.xml
 
 *.properties
