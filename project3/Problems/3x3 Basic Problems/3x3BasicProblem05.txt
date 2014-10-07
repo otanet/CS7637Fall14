@@ -1,4 +1,4 @@
-3x3 Basic Problem 04
+3x3 Basic Problem 05
 3x3
 4
 A
@@ -10,8 +10,8 @@ A
 		fill:yes
 		inside:A
 B
-	C
-		shape:octagon
+	c
+		shape:square
 		fill:no
 	D
 		shape:plus
@@ -19,34 +19,36 @@ B
 		inside:C
 C
 	E
-		shape:octagon
+		shape:circle
 		fill:no
 	F
-		shape:Pac-Man
+		shape:Pac-man
 		fill:yes
 		inside:E
+		angle:270
 D
 	G
 		shape:circle
 		fill:no
 	H
-		shape:triangle
+		shape:plus
 		fill:yes
 		inside:G
 E
 	I
-		shape:circle
+		shape:octagon
 		fill:no
 	J
-		shape:plus
+		shape:Pac-man
 		fill:yes
 		inside:I
+		angle:270
 F
 	K
-		shape:circle
+		shape:square
 		fill:no
 	L
-		shape:Pac-Man
+		shape:triangle
 		fill:yes
 		inside:K
 G
@@ -54,28 +56,29 @@ G
 		shape:square
 		fill:no
 	N
-		shape:triangle
+		shape:Pac-man
 		fill:yes
 		inside:M
+		angle:270
 H
 	O
-		shape:square
+		shape:circle
 		fill:no
 	P
-		shape:plus
+		shape:triangle
 		fill:yes
 		inside:O
 1
 	Q
-		shape:circle
+		shape:square
 		fill:no
 	R
-		shape:Pac-Man
+		shape:plus
 		fill:yes
 		inside:Q
 2
 	S
-		shape:circle
+		shape:square
 		fill:no
 	T
 		shape:triangle
@@ -83,23 +86,24 @@ H
 		inside:S
 3
 	U
-		shape:circle
-		fill:no
-	V
-		shape:plus
-		fill:yes
-		inside:U
-4
-	W
 		shape:square
 		fill:no
+	V
+		shape:Pac-man
+		fill:yes
+		inside:U
+		angle:270
+4
+	W
+		shape:octagon
+		fill:no
 	X
-		shape:Pac-Man
+		shape:plus
 		fill:yes
 		inside:W
 5
 	Y
-		shape:square
+		shape:octagon
 		fill:no
 	Z
 		shape:triangle
@@ -107,9 +111,10 @@ H
 		inside:Y
 6
 	1
-		shape:square
+		shape:octagon
 		fill:no
 	2
-		shape:plus
+		shape:Pac-man
 		fill:yes
 		inside:1
+		angle:270

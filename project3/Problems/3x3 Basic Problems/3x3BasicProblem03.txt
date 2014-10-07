@@ -2,58 +2,58 @@
 3x3
 1
 A
-	Z
+	A
 		shape:square
 		fill:yes
 B
-	Z
+	B
 		shape:circle
 		fill:yes
 C
-	Z
+	C
 		shape:plus
 		fill:yes
 D
-	Z
+	D
 		shape:plus
 		fill:yes
 E
-	Z
+	E
 		shape:square
 		fill:yes
 F
-	Z
+	F
 		shape:circle
 		fill:yes
 G
-	Z
+	G
 		shape:circle
 		fill:yes
 H
-	Z
+	H
 		shape:plus
 		fill:yes
 1
-	Z
+	I
 		shape:square
 		fill:yes
 2
-	Z
+	J
 		shape:plus
 		fill:yes
 3
-	Z
+	K
 		shape:circle
 		fill:yes
 4
-	Z
+	L
 		shape:square
 		fill:no
 5
-	Z
+	M
 		shape:plus
 		fill:no
 6
-	Z
+	N
 		shape:circle
 		fill:no

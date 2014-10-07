@@ -85,14 +85,14 @@ public class ProblemSet {
         while(r.hasNext()) {
             String line=r.nextLine();
             if(!line.startsWith("\t")) {
-//                if(tryParseInt(line)) {// WLT This is where it was commented out.
-//                    int i=random.nextInt(options.size());
-//                    if(currentAnswer.equals(line)) {
-//                        answer=options.get(i);
-//                    }
-//                    line=options.get(i);
-//                    options.remove(i);
-//                }// WLT this is where it was commented out.
+                /*if(tryParseInt(line)) {
+                    int i=random.nextInt(options.size());
+                    if(currentAnswer.equals(line)) {
+                        answer=options.get(i);
+                    }
+                    line=options.get(i);
+                    options.remove(i);
+                }*/
                 RavensFigure newFigure=new RavensFigure(line);
                 figures.add(newFigure);
                 currentFigure=newFigure;
