@@ -59,9 +59,8 @@ public class Agent {
      */
     public String Solve(RavensProblem problem) {
     	String answer = "1";
-        String debugProblem = "2x2 Basic Problem 09";
-        if (problem.getName().equals(debugProblem))
-        {
+         String debugProblem = "2x1 Basic Problem 04";
+         if (problem.getName().equals(debugProblem)){
             if(DEBUG_LEVEL>=1)
     		System.out.println();
     	
@@ -82,7 +81,7 @@ public class Agent {
 
             if(DEBUG_LEVEL>=1)
                     System.out.println();
-        }
+        } // comment out for single problem debugging
     		
         return answer;
     }
@@ -99,13 +98,19 @@ public class Agent {
     	problem_transforms.add(generateTransform(problem, true, "C", "5"));
     	problem_transforms.add(generateTransform(problem, true, "C", "6"));
     	
+        System.out.println("*****Transforms generated********");
+        
     	//answer index: 0-highest scoring answer, 1-similarity score
     	int[] answer = testTransforms2x1(problem_transforms);
+        
+        System.out.println("*****Transforms scored top-down ********");
     	
     	//Bottom-up correlation
 	    problem_transforms.remove(0);
 	    problem_transforms.add(0,generateTransform(problem, false, "A", "B"));
 	    int[] answer2 = testTransforms2x1(problem_transforms);
+            
+        System.out.println("*****Transforms scored top-down ********");
 	    
 	    //Pick highest scoring answer
 	    answer = (answer[1] >= answer2[1]) ? answer: answer2;
@@ -138,30 +143,39 @@ public class Agent {
             
             //********************
     	
-//    	 //Top-down correlation
-//    	List<List<RavensTransform>> problem_transforms2 = new ArrayList<List<RavensTransform>>();
-//    	problem_transforms.add(generateTransform(problem, true, "A", "C"));
-//    	problem_transforms.add(generateTransform(problem, true, "B", "1"));
-//    	problem_transforms.add(generateTransform(problem, true, "B", "2"));
-//    	problem_transforms.add(generateTransform(problem, true, "B", "3"));
-//    	problem_transforms.add(generateTransform(problem, true, "B", "4"));
-//    	problem_transforms.add(generateTransform(problem, true, "B", "5"));
-//    	problem_transforms.add(generateTransform(problem, true, "B", "6"));
-//    	
-//    	//answer index: 0-highest scoring answer, 1-similarity score
-//    	int[] answerA2 = testTransforms2x1(problem_transforms2);
-//    	
-//    	//Bottom-up correlation
-//	    problem_transforms.remove(0);
-//	    problem_transforms.add(0,generateTransform(problem, false, "A", "B"));
-//	    int[] answerB2 = testTransforms2x1(problem_transforms);
-//	    
-//	    //Pick highest scoring answer
-//	    answerA2 = (answerA2[1] >= answerB2[1]) ? answerA2: answerB2;
-//            
-//            //********************
-    	int finalAnswer;
+    	 //Top-down correlation
+    	List<List<RavensTransform>> problem_transforms2 = new ArrayList<List<RavensTransform>>();
+    	problem_transforms2.add(generateTransform(problem, true, "A", "C"));
+    	problem_transforms2.add(generateTransform(problem, true, "B", "1"));
+    	problem_transforms2.add(generateTransform(problem, true, "B", "2"));
+    	problem_transforms2.add(generateTransform(problem, true, "B", "3"));
+    	problem_transforms2.add(generateTransform(problem, true, "B", "4"));
+    	problem_transforms2.add(generateTransform(problem, true, "B", "5"));
+    	problem_transforms2.add(generateTransform(problem, true, "B", "6"));
+    	
+    	//answer index: 0-highest scoring answer, 1-similarity score
+    	int[] answerA2 = testTransforms2x1(problem_transforms2);
+    	
+    	//Bottom-up correlation
+	    problem_transforms.remove(0);
+	    problem_transforms.add(0,generateTransform(problem, false, "A", "B"));
+	    int[] answerB2 = testTransforms2x1(problem_transforms);
+	    
+	    //Pick highest scoring answer
+	    answerA2 = (answerA2[1] >= answerB2[1]) ? answerA2: answerB2;
+            
+            //********************
+    	int finalAnswer = 0;
+        if (answerA1[0] == answerB1[0] )
+        {
         finalAnswer = answerA1[0];
+        }
+        else
+        {
+            System.out.println("here we are");
+        }
+        System.out.println("Robbie guessed: "+finalAnswer);
+        System.out.println("Correct answer: "+problem.checkAnswer(Integer.toString(finalAnswer)));
     	return Integer.toString(finalAnswer);
     }
     
@@ -252,6 +266,7 @@ public class Agent {
 	    				AB_transforms.get(j).printTransform();
 	    				System.out.print("C: ");
 	    				problem_transforms.get(i).get(k).printTransform();
+                                        System.out.println("*******");
     				}
     			}
     		}
