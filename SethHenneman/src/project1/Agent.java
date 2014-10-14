@@ -19,7 +19,7 @@ public class Agent {
 	/**
 	 * Levels of debug printed (0=off,1=lowest-3=highest) 
 	 */
-	public static int DEBUG_LEVEL=0;
+	public static int DEBUG_LEVEL=3;
 	
     /**
      * The default constructor for your Agent. Make sure to execute any

@@ -1,16 +1,6 @@
 package project3;
 
-//import java.util.ArrayList;
-//import java.util.Arrays;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-//import java.util.LinkedHashSet;
-//import java.util.List;
-//import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
+import java.util.*;
 
 /**
  * Your Agent for solving Raven's Progressive Matrices. You MUST modify this
@@ -26,6 +16,11 @@ import java.util.Set;
  * 
  */
 public class Agent {
+	/**
+	 * Levels of debug printed (0=off,1=lowest-3=highest) 
+	 */
+	public static int DEBUG_LEVEL=3;
+	
     /**
      * The default constructor for your Agent. Make sure to execute any
      * processing necessary before your Agent starts solving problems here.
@@ -34,29 +29,8 @@ public class Agent {
      * main().
      * 
      */
-    HashMap<String,String> transformations = new HashMap<>();
-    HashMap<String,String> attributes = new HashMap<>();
-    HashMap<String,Double> transformationScore = new HashMap<>();
-    String problemName;
-    Integer iFormat;
-    
     public Agent() {
-        transformations.put("location","above,inside,under,below,left,right,left-of,right-of");
-        transformations.put("scaled","size");
-        transformations.put("angle","angle");
-        transformations.put("fill","fill");
-        
-        
-        attributes.put("fill","fill");
-        
-        transformationScore.put("scaled", 1.0);
-        transformationScore.put("angle", 1.0);
-        transformationScore.put("fill", 1.0);
-        transformationScore.put("location", 1.0);
-        iFormat = 35;
-        
-        
-        
+    	
     }
     /**
      * The primary method for solving incoming Raven's Progressive Matrices.
@@ -84,679 +58,477 @@ public class Agent {
      * @return your Agent's answer to this problem
      */
     public String Solve(RavensProblem problem) {
-        String answer="0";
-        println();
-        println("---------------PROBLEM:" + problem.getName() +"----------------");
-        println();
-        //This just gets all of the figures from the problems
-        RavensFigure figA = problem.getFigures().get("A");
-        RavensFigure figB = problem.getFigures().get("B");
-        RavensFigure figC = problem.getFigures().get("C");
-        RavensFigure fig1 = problem.getFigures().get("1");
-        RavensFigure fig2 = problem.getFigures().get("2");
-        RavensFigure fig3 = problem.getFigures().get("3");
-        RavensFigure fig4 = problem.getFigures().get("4");
-        RavensFigure fig5 = problem.getFigures().get("5");
-        RavensFigure fig6 = problem.getFigures().get("6");
-        
-        problemName = problem.getName();
-        
-//******************************DEBUG*********************************
-     //   String debugProblem = "2x2 Basic Problem 09";
-     //   if (problem.getName().equals(debugProblem)){
-//******************************DEBUG*********************************
-        //-- Stage 1
-        //verifyCorrelation returns HashMap<String,String> of ????????????
-        HashMap<String,String> ObjectMapping = VerifyCorrelation(figA,figB);
-        HashMap<String, String> ab = BuildComparisonSheet(figA, figB, new HashMap<String,String>());
-        HashMap<String, String> c1 = BuildComparisonSheet(figC, fig1, ObjectMapping);
-        HashMap<String, String> c2 = BuildComparisonSheet(figC, fig2, ObjectMapping);
-        HashMap<String, String> c3 = BuildComparisonSheet(figC, fig3, ObjectMapping);
-        HashMap<String, String> c4 = BuildComparisonSheet(figC, fig4, ObjectMapping);
-        HashMap<String, String> c5 = BuildComparisonSheet(figC, fig5, ObjectMapping);
-        HashMap<String, String> c6 = BuildComparisonSheet(figC, fig6, ObjectMapping);
-
-        int[] score = {0,0,0,0,0,0,0};
-        int[] score_2 = {0,0,0,0,0,0,0};
-        int[] finalscore = {0,0,0,0,0,0,0};
-        
-        //--Stage 2 & 3
-        score[1]+=ScoreFactSheets(ab, c1, "1");
-        score[2]+=ScoreFactSheets(ab, c2, "2");
-        score[3]+=ScoreFactSheets(ab, c3, "3");
-        score[4]+=ScoreFactSheets(ab, c4, "4");
-        score[5]+=ScoreFactSheets(ab, c5, "5");
-        score[6]+=ScoreFactSheets(ab, c6, "6");
-        
-        if (problem.getProblemType().equals("2x2"))
+    	String answer = "1";
+        String debugProblem = "2x2 Basic Problem 09";
+        if (problem.getName().equals(debugProblem))
         {
-        ObjectMapping = VerifyCorrelation(figA,figC);
-        HashMap<String, String> ab_2 = BuildComparisonSheet(figA, figC, new HashMap<String,String>());
-        HashMap<String, String> b1_2 = BuildComparisonSheet(figB, fig1, ObjectMapping);
-        HashMap<String, String> b2_2 = BuildComparisonSheet(figB, fig2, ObjectMapping);
-        HashMap<String, String> b3_2 = BuildComparisonSheet(figB, fig3, ObjectMapping);
-        HashMap<String, String> b4_2 = BuildComparisonSheet(figB, fig4, ObjectMapping);
-        HashMap<String, String> b5_2 = BuildComparisonSheet(figB, fig5, ObjectMapping);
-        HashMap<String, String> b6_2 = BuildComparisonSheet(figB, fig6, ObjectMapping);
-
-        
-        
-        //--Stage 2 & 3
-        score_2[1]+=ScoreFactSheets(ab_2, b1_2, "1");
-        score_2[2]+=ScoreFactSheets(ab_2, b2_2, "2");
-        score_2[3]+=ScoreFactSheets(ab_2, b3_2, "3");
-        score_2[4]+=ScoreFactSheets(ab_2, b4_2, "4");
-        score_2[5]+=ScoreFactSheets(ab_2, b5_2, "5");
-        score_2[6]+=ScoreFactSheets(ab_2, b6_2, "6");
-            
-        }
-        finalscore[1]= score[1] + score_2[1] ;
-        finalscore[2]= score[2] + score_2[2];
-        finalscore[3]= score[3] + score_2[3];
-        finalscore[4]= score[4] + score_2[4];
-        finalscore[5]= score[5] + score_2[5];
-        finalscore[6]= score[6] + score_2[6];
-        
-        //--Stage 4
-        for(int i=0;i<score.length;i++){
-            println(i+"=>"+score[i]);
-        }
-        println();
-        
-        for(int i=0;i<score_2.length;i++){
-            println(i+"=>"+score_2[i]);
-        }
-        
-        println();
-        
-        for(int i=0;i<finalscore.length;i++){
-            println(i+"=>"+finalscore[i]);
-        }
-        
-        
-        
-        int max = finalscore[0];
-        int maxI = 0;
-        for ( int i = 1; i < finalscore.length; i++) {
-            if ( finalscore[i] > max) {
-              max = finalscore[i];
-              maxI = i;
-            }
-        }
-        int correct=0;
-        int wrong=0;
-        answer = String.valueOf(maxI);
-        println("Answer: "+answer);
-//******************************DEBUG*********************************
-       // }//For debugging purposes
-//******************************DEBUG*********************************
-        String correctAnswer = problem.checkAnswer(answer);
-        System.out.println("The correct answer is: "+ correctAnswer);
-        System.out.println("Robbie guessed: "+ answer);
-        return String.valueOf(answer);
-
-    }
-    
-    private  void println()
-    {
-        println("");
-    }
-    private void println(String text)
-    {
-        System.out.println(text);
-    }
-    
-    //--Used to score the transformation knowledge sheets
-    private double ScoreFactSheets(HashMap<String, String> fromTrans, HashMap<String, String> toTrans, String num)
-    {
-        int iformatting = iFormat;
-    	String debug = "Verbose";
+            if(DEBUG_LEVEL>=1)
+    		System.out.println();
     	
-        double score = 0;
-        HashSet<String> ShapesInC = new HashSet<>();
-        int shapesInCQty = 0;
-        int countChanged = Integer.valueOf(fromTrans.containsKey("count_changed")?fromTrans.get("count_changed"):"0");
-        
-        for(String key : fromTrans.keySet())
-        {
-            
-            //match keys:values from both transformation sheets without matching shape
-            
-            //String t[] = key.split("\\.");
-            String objKey = (key.split("\\.")[0].equals("A"))?"C":num;
-            String exactKey = key.replaceFirst("\\w\\.", "");
-            String cKey = exactKey.contains(".")?objKey+"."+exactKey:exactKey;
-            String val1 = fromTrans.get(key);
-            String val2 = (toTrans.containsKey(cKey))?toTrans.get(cKey):null;
-            if (exactKey.equals("tf-diff-angle"))
-                    {
-                      val2 = (toTrans.containsKey(key))?toTrans.get(key):null;  
-                    }
-            println(key+" : "+val1+" - "+cKey+" : "+val2);
-            iformatting--;
-            if(!key.contains("shape") && !key.contains("minsize") && !key.contains("maxsize") && !key.contains(".angle"))
-            {
-                if (val1.equals(val2))
-                {
-                    score++;
-                    if(debug.equals("Verbose"))System.out.println("*****Score increased******");
-                    iformatting--;
-                }
-                
-                
-            }
-            else 
-            {
-                if (cKey.contains("C"))
-                {
-                    ShapesInC.add(val2);
-                    shapesInCQty++;
-                }
-            }
-        }
-        
-        //--tie breakers  --------------------
-        int shapesInAnswer=0;
-        int expectedCountOfNewObjects = 0;
-        if(fromTrans.containsKey("tf-shpe_added"))
-            expectedCountOfNewObjects = shapesInCQty + Math.abs(countChanged);
-        else if (fromTrans.containsKey("tf-shpe_deleted"))
-            expectedCountOfNewObjects = shapesInCQty - Math.abs(countChanged);
-       
-        System.out.println("Expected Objects: "+expectedCountOfNewObjects);
-        for(String shape:ShapesInC)
-        {
-            shapesInAnswer=0;
-            for(String key : toTrans.keySet())
-            {
-                //Most objects from C should be in answer except if shape changed from A -> B
-                if(key.contains("shape") && key.contains(num) && toTrans.get(key).equals(shape) && !fromTrans.containsKey("tf-shpe_changed") )
-                {
-                    score++;
-                    if(debug.equals("Verbose"))System.out.println("***** shapes the same Score increased******");
-                    iformatting--;
-                }
-                
-                
-                if(key.contains("shape") && key.contains(num))
-                    shapesInAnswer++;
-            }
-        }
-        //for 2x2 matrices, check for symmetry of rotations if all 4, extra point.
-        if((fromTrans.containsKey("0.tf-diff-angle")&& toTrans.containsKey("0.tf-diff-angle"))||
-               (fromTrans.containsKey("1.tf-diff-angle")&& toTrans.containsKey("1.tf-diff-angle"))||
-                (fromTrans.containsKey("2.tf-diff-angle")&& toTrans.containsKey("2.tf-diff-angle")))
-        { 
-            //get all of the angles of rotation
-            Integer[] angles = {360,360,360,360,360,360,360,360,360,360,360,360,360,360,360,360,360,360,360};
-            int i = 0;
-            //do if for each object, first figure out how many object there are total.
-            Integer x = 0;
-            Set<String> fromTranskeySet = fromTrans.keySet();
-            String findstring = "."+x.toString()+".";
-            while (fromTranskeySet.contains(findstring))
-            {
-                x++;
-            }
-            int numObjects = x;
-                for (Entry<String,String> entry : fromTrans.entrySet())
-                {
-                    if (entry.getKey().endsWith(".angle"))
-                            {
-                               String key = entry.getKey();
-                               angles[i] = Integer.parseInt(fromTrans.get(key));
-                               i++;
-                            }
-                }
-                for (Entry<String,String> entry : toTrans.entrySet())
-                {
-                    if (entry.getKey().endsWith(".angle"))
-                            {
-                               String key = entry.getKey();
-                               String sAngle = toTrans.get(key);
-                               angles[i] = Integer.parseInt(sAngle);
-                               i++;
-                            }
-                }
-            Arrays.sort(angles, 0, 4);
-            if (((angles[0]+90) == angles[1]) && ((angles[1]+90) == angles[2]) && ((angles[2]+90) == angles[3]))
-            {
-                score++;
-                score++;
-                if(debug.equals("Verbose"))System.out.println("*****rotation sym Score increased******");
-                iformatting--;
-            }
-                
-            
-                
-        }
-    
-        //Amount of objects in answer should match qty objects in C less deleted objects
-        if(shapesInAnswer == expectedCountOfNewObjects)
-        {
-            score++;
-            if(debug.equals("Verbose"))System.out.println("*****shapesInAnswer = expected Score increased******");
-            iformatting--;
-        }
-        while (iformatting >0)
-        {
-        System.out.println();
-        iformatting--;
-        }
-        
-        return score;
-    
-    }
-    
-    //--Print transformation sheet
-    private void PrintSheet(HashMap<String, String> sheet)
-    {
-        for (Entry<String, String> entry : sheet.entrySet()) 
-            System.out.println(entry.getKey() + ":" + entry.getValue());
-    }
-    
-    private void AreAllShapesSame(HashMap<String, String> ret1, HashMap<String, String> ret2, HashMap<String, String> ret) {
-        boolean shapeSame = true;
-        String shape = "";
-        String shapeRet1 = "";
-        String shapeRet2 = "";
-        
-        for(String entry : ret1.keySet())
-        {
-            if (entry.toLowerCase().contains("shape"))
-            {
-                if (shapeRet1.equals("") && shapeSame){
-                    shapeRet1 = ret1.get(entry);
-                } else if (!shapeRet1.equals(ret1.get(entry))){
-                    shapeSame = false;
-                }
-            }
-        }
-        ret.put("tf-same_shpe_fig1", String.valueOf(shapeSame));
-        shapeSame = true;
-        for(String entry : ret2.keySet())
-        {
-            if (entry.toLowerCase().contains("shape"))
-            {
-                if (shapeRet2.equals("") && shapeSame){
-                    shapeRet2 = ret2.get(entry);
-                } else if (!shapeRet1.equals(ret2.get(entry))){
-                    shapeSame = false;
-                }
-            }
-        }
-        ret.put("tf-same_shpe_fig2", String.valueOf(shapeSame));
-    }
-    
-    private void DidShapeChange(HashMap<String,String> ret1, HashMap<String,String> ret2, HashMap<String,String> ret, String fixedShape)
-    {
-        boolean shapeChanged = false;
-        int cnt = 0;
-        for(String entry : ret1.keySet())
-        {
-            if (entry.toLowerCase().contains("shape"))
-            {
-                //We just want the key attribute
-                String shapeRet1 = ret1.get(entry);
-                String shapeRet2 = (ret1.containsKey(entry)) ?ret2.get(entry):"";
-                if (shapeRet2 != null)
-                {
-                    if(!shapeRet1.equals(shapeRet2))
-                    {
-                        shapeChanged = true;
-                        cnt++;
-                    }
-                    else
-                    {
-                        fixedShape = shapeRet1;
-                    }
-                }
-            }
-        }
-        
-        if(shapeChanged)
-            ret.put("tf-shpe_changed", String.valueOf(cnt));
-    }
-    
-        private void WasShapeFilled(HashMap<String,String> ret1, HashMap<String,String> ret2, HashMap<String,String> ret)
-    {
-        boolean fillChanged = false;
-        int cnt = 0;
-        for(String entry : ret1.keySet())
-        {
-            if (entry.toLowerCase().contains("fill"))
-            {
-                String shapeRet1 = ret1.get(entry);
-                String shapeRet2 = (ret1.containsKey(entry)) ?ret2.get(entry):"";
-                if(!shapeRet1.equals(shapeRet2)){
-                    fillChanged = true;
-                    cnt++;
-                }
-            }
-        }
-        
-        if(fillChanged)
-            ret.put("tf-fill_changed", String.valueOf(cnt));
-    }
-        
-    private void WasShapeScaled(HashMap<String,String> ret1, HashMap<String,String> ret2, HashMap<String,String> ret)
-    {
-        boolean scaleChanged = false;
-        int cnt = 0;
-        Set test = ret1.keySet();
-        for(String entry : ret1.keySet())
-        {
-            if (entry.toLowerCase().contains("size"))
-            {
-                String shapeRet1 = ret1.get(entry);
-                String shapeRet2 = (ret1.containsKey(entry)) ?ret2.get(entry):"";
-                if(!shapeRet1.equals(shapeRet2)){
-                    scaleChanged = true;
-                    cnt++;
-                }
-            }
-        }
-        
-        if(scaleChanged)
-            ret.put("tf-scale_changed", String.valueOf(cnt));
-    }
-    
-        private void AreShapesSymmetric(HashMap<String,String> ret1, HashMap<String,String> ret2, HashMap<String,String> ret, Integer sym[])
-    {
-        boolean shapeChanged = false;
-        int cnt = 0;
-        int index = 0;
-        for(String entry : ret1.keySet())
-        {
-            if (entry.toLowerCase().contains("shape"))
-            {
-                //We just want the key attribute
-                String shapeRet1 = ret1.get(entry);
-                String shapeRet2 = (ret1.containsKey(entry)) ?ret2.get(entry):"";
-                if (shapeRet2 != null)
-                {
-                    if(!shapeRet1.equals(shapeRet2))
-                    {
-                        shapeChanged = true;
-                        cnt++;
-                        index++;
-                    }
-                    else
-                    {
-                        //The shapes are equal, now let's build the symmetry matrix
-                        if (shapeRet1.equals("square")
-                                || shapeRet1.equals("plus"))
-                        {
-                            sym[index] = 1;
-                            index++;
-                        }
-                                    
-                    }
-                }
-            }
-        }
-    }
-    
-    //--Build transformation sheets
-    private HashMap<String,String> BuildComparisonSheet(RavensFigure figure1, RavensFigure figure2, HashMap<String,String> ObjectMapping)
-    {
-        int iformatting = iFormat;
-        HashMap<String,String> ret = new HashMap<>();
-        HashMap<String,String> ret1 = new HashMap<>();
-        HashMap<String,String> ret2 = new HashMap<>();
-        
-        HashMap<String,String> realObjectMappingFig1 = new HashMap<>();
-        if(!ObjectMapping.isEmpty() ){
-            for(Entry<String,String> entry : ObjectMapping.entrySet()){
-                String size = entry.getValue();
-                for(RavensObject obj:figure1.getObjects())
-                {
-                    for(RavensAttribute att :  obj.getAttributes()){
-                        if(att.getName().toLowerCase().contains("size") && att.getValue().equals(size)){
-                            realObjectMappingFig1.put(obj.getName(), entry.getKey().split("\\.")[0]);
-                        }
-                    }
+            if(DEBUG_LEVEL>=3)
+    		printProblem(problem);
+    	
 
-                }
+            String type = problem.getProblemType();
+            if (type.equals("2x1")) {
+                    answer = solve2x1(problem);
+            } else if (type.equals("2x2")) {
+                    answer = solve2x2(problem);
+            } else if (type.equals("3x3")) {
+                    answer = solve3x3(problem);
+            } else {
+                    System.out.println("ERROR: Unknown problem type");
             }
-        }
-        HashMap<String,String> realObjectMappingFig2 = new HashMap<>();
-        if(!ObjectMapping.isEmpty() ){
-            for(Entry<String,String> entry : ObjectMapping.entrySet()){
-                String size = entry.getValue();
-                for(RavensObject obj:figure2.getObjects())
-                {
-                    for(RavensAttribute att :  obj.getAttributes()){
-                        if(att.getName().toLowerCase().contains("size") && att.getValue().equals(size)){
-                            realObjectMappingFig2.put(obj.getName(), entry.getKey().split("\\.")[0]);
-                        }
-                    }
 
-                }
-            }
+            if(DEBUG_LEVEL>=1)
+                    System.out.println();
         }
-        
-        Integer objNum = 0;
-        ExtractAttributes(figure1, ret1, realObjectMappingFig1, objNum);
-        ExtractAttributes(figure2, ret2, realObjectMappingFig2, objNum);
-        
-        Integer maxsize;
-        Integer minsize;
-        
-        int cnt = figure2.getObjects().size() - figure1.getObjects().size();
-        if (cnt == 0)
-        {
-            maxsize = figure1.getObjects().size();
-            minsize = maxsize;
-        }
-        else if (cnt>0)
-        {
-            maxsize = figure2.getObjects().size();
-            minsize = figure1.getObjects().size();
-        }
-        else
-        {
-            maxsize = figure1.getObjects().size();
-            minsize = figure2.getObjects().size();
-        }
-        ret.put("maxsize",maxsize.toString());
-        ret.put("minsize", minsize.toString());
-               
-        //Determine if shapes were added or removed
-        if(figure2.getObjects().size() > figure1.getObjects().size())
-            ret.put("tf-shpe_added", "1");
-        else if(figure2.getObjects().size() < figure1.getObjects().size())
-            ret.put("tf-shpe_deleted", "1");
-        String fixedShape = null;
-        DidShapeChange(ret1, ret2, ret, fixedShape);
-        AreAllShapesSame(ret1, ret2, ret);
-        //WasShapeFilled(ret1, ret2, ret);
-        WasShapeScaled(ret1, ret2, ret);
-        Integer[] sym = {0,0,0,0,0,0,0};
-        AreShapesSymmetric(ret1,ret2,ret,sym);
-        Set<Entry<String, String>> transforms = transformations.entrySet();
-        //Loop through all of the big picture transformations: location, shape,
-        //fill, angle, etc.
-        for(Entry<String,String> entry: transforms)
-        {
-
-            String transform = null;
-            String key = entry.getKey();
-            String value = entry.getValue();
-            String[] tags = entry.getValue().split(",");
-            //Then loop through all of the possibilities for those transformations.
-            for (String tag : tags) {
-                Set<Entry<String,String>> ret1EntrySet = ret1.entrySet();
-                for(Entry<String,String> retEntry : ret1EntrySet)
-                {
-                    //If the transformation that you're looking for is there, and the second figure has the same one...
-                    Boolean test = retEntry.getKey().trim().toLowerCase().contains(tag.toLowerCase());
-                    String test3 = retEntry.getKey();
-                    Boolean test2 = ret2.containsKey( test3);
-                    if(test && test2)
-                    {
-                        String ret1EntryValue = retEntry.getValue();
-                        String ret1EntryKey = retEntry.getKey();
-                        String ret2Test = ret2.get(ret1EntryKey); 
-                        
-                        if(!ret1EntryValue.equals(ret2Test)||tag.trim().toLowerCase().equals("angle"))
-                        {
-                            transform = entry.getKey();
-                            //transformValue = retEntry.getValue();
-                            if(attributes.containsKey(transform))
-                                ret.put(transform, ret2.get(retEntry.getKey()) );
-                            else if (transform.equals("angle"))
-                            {
-                                //pull of the shape number so that we can see what the symmetry is
-                                Integer shapeIndex = Integer.parseInt(retEntry.getKey().split("\\.")[0]);
-                                Integer angle1 = Integer.parseInt(retEntry.getValue());
-                                Integer angle2 = Integer.parseInt(ret2.get(ret1EntryKey));
-                                Integer anglediff = angle2 - angle1;
-                                if (anglediff > 359)anglediff = 360 - anglediff;
-                                if(sym[shapeIndex]==1)
-                                {
-                                    //this assumes that the shapes are the same from one to the other and that they 
-                                    //are symmetrical such that any change >90 is not seen.
-                                    if (anglediff < 0 ) anglediff = Math.abs(anglediff);
-                                    while(anglediff>45)
-                                        anglediff = anglediff - 90;
-       
-                                }
-                                
-
-                                ret.put(shapeIndex.toString()+ ".tf-diff-"+transform, anglediff.toString());
-                            }
-                            else
-                                ret.put("tf-"+transform, transform); //TODO: New frame needs to be created also
-                            transform = null;
-                        }
-                    }
-                }
-                
-            }
-        }
-        
-        for(Entry<String,String> entry : ret1.entrySet())
-        {
-            ret.put(figure1.getName()+"."+entry.getKey(), entry.getValue());
-        }
-        for(Entry<String,String> entry : ret2.entrySet())
-        {
-            ret.put(figure2.getName()+"."+entry.getKey(), entry.getValue());
-        }
-        ret.put("count_changed", ""+cnt);
-        
-        int i = iFormat;
-        for(Entry<String,String> entry : ret.entrySet())
-        {
-            println(entry.toString());
-            i--;
-        }
-        
-        println("**********");
-        while (i>0)
-        {
-            println();
-            i--;
-        }
-                
-
-        return ret;
-    }
-
-    private void ExtractAttributes(RavensFigure figure, HashMap<String, String> ret, HashMap<String,String> realObjectMapping, Integer objNum) {
-        //.getObjects returns an arrayList
-        for(RavensObject obj:figure.getObjects())
-        {
-            
-            //we will correlate the objects via 1, 2, 3, etc.
-            String objName = objNum.toString(); // was obj.getName();
-            String realName = "";
-            for(RavensAttribute att:obj.getAttributes())
-            {
-                //ret.put(figure.getName()+"."+obj.getName()+"."+att.getName(), att.getValue());
-                if (!realObjectMapping.isEmpty()&& realObjectMapping.containsKey(obj.getName()))
-                {
-                     realName = realObjectMapping.get(obj.getName());
-                }
-                else
-                {
-                     realName = objName; //obj.getName();
-                }
-                //String realName = (!realObjectMapping.isEmpty() && realObjectMapping.containsKey(obj.getName()))? realObjectMapping.get(obj.getName()):obj.getName();
-                ret.put(realName+"."+att.getName(), att.getValue());
-            }
-            objNum++;
-        }
+    		
+        return answer;
     }
     
-    private HashMap<String,String> VerifyCorrelation(RavensFigure figure1, RavensFigure figure2) {
-        HashMap<String,String> corrFig1 = new HashMap<>();
-        HashMap<String,String> corrFig2 = new HashMap<>();
-        HashMap<String,String> retCorrelation = new HashMap<>();
-        boolean correlated = true;
-        
-        Integer objNumber = 0;
-        for(RavensObject obj:figure1.getObjects())
-        {
-            //we will do the correlations by shape and size and use 1, 2, 3, etc for shape correlation
-            for(RavensAttribute att :  obj.getAttributes()){
-                //first do correlation by shape and size
-                if(att.getName().toLowerCase().contains("shape") || att.getName().toLowerCase().contains("size")){
-                    corrFig1.put(objNumber.toString()+"."+att.getName(), att.getValue());  //was obj.getName() for first one.
-                    objNumber++;
-                //then do correlation by shape only
-                
-                //then do correlation by size only
-                    
-                }
-            }
-            
-        }
-        objNumber = 0;
-        for(RavensObject obj:figure2.getObjects())
-        {
-            for(RavensAttribute att :  obj.getAttributes()){
-                if(att.getName().toLowerCase().contains("shape") || att.getName().toLowerCase().contains("size")){
-                    corrFig2.put(objNumber+"."+att.getName(), att.getValue());  //was obj.getName() for first one.
-                    objNumber++;
-                }
-            }
-            
-        }
-        
-         
-        //Test correlations
-        for(Entry<String,String> entry : corrFig1.entrySet()){
-            if(corrFig2.containsKey(entry.getKey()) && !entry.getValue().equals(corrFig2.get(entry.getKey())))
-                correlated = false;
-        }
-        //HashMap<String, String> ab = BuildComparisonSheet( corrFig1, corrFig2);
-        if(correlated){
-            //ret.put("tf-correlated", "yes");
-            for(Entry<String,String> entry : corrFig1.entrySet()){
-                if(entry.getKey().toLowerCase().contains("size"))
-                    retCorrelation.put(entry.getKey(), entry.getValue());
-            }
-        }
-        int d=0;
-        return retCorrelation;
+    public String solve2x1(RavensProblem problem) {
+    	
+    	//Top-down correlation
+    	List<List<RavensTransform>> problem_transforms = new ArrayList<List<RavensTransform>>();
+    	problem_transforms.add(generateTransform(problem, true, "A", "B"));
+    	problem_transforms.add(generateTransform(problem, true, "C", "1"));
+    	problem_transforms.add(generateTransform(problem, true, "C", "2"));
+    	problem_transforms.add(generateTransform(problem, true, "C", "3"));
+    	problem_transforms.add(generateTransform(problem, true, "C", "4"));
+    	problem_transforms.add(generateTransform(problem, true, "C", "5"));
+    	problem_transforms.add(generateTransform(problem, true, "C", "6"));
+    	
+    	//answer index: 0-highest scoring answer, 1-similarity score
+    	int[] answer = testTransforms2x1(problem_transforms);
+    	
+    	//Bottom-up correlation
+	    problem_transforms.remove(0);
+	    problem_transforms.add(0,generateTransform(problem, false, "A", "B"));
+	    int[] answer2 = testTransforms2x1(problem_transforms);
+	    
+	    //Pick highest scoring answer
+	    answer = (answer[1] >= answer2[1]) ? answer: answer2;
+    	
+    	return Integer.toString(answer[0]);
     }
     
-    private HashSet<RavensAttribute> FindDifference(RavensObject A, RavensObject B)
-    {
-        HashSet<RavensAttribute> ret = new HashSet<RavensAttribute>();
-        for(RavensAttribute ravensAttributeA : A.getAttributes())
-        {
-            for(RavensAttribute ravensAttributeB : B.getAttributes())
-            {
-                if (ravensAttributeA.getName() == null ? ravensAttributeB.getName() == null : ravensAttributeA.getName().equals(ravensAttributeB.getName()))
-                    if(ravensAttributeA.getValue() == null ? ravensAttributeB.getValue() != null : !ravensAttributeA.getValue().equals(ravensAttributeB.getValue()))
-                        ret.add(new RavensAttribute(ravensAttributeA.getName(), ravensAttributeB.getValue()));
-            }
-                
-        }
+    public String solve2x2(RavensProblem problem) {
+    	
+        //Top-down correlation
+    	List<List<RavensTransform>> problem_transforms = new ArrayList<List<RavensTransform>>();
+    	problem_transforms.add(generateTransform(problem, true, "A", "B"));
+    	problem_transforms.add(generateTransform(problem, true, "C", "1"));
+    	problem_transforms.add(generateTransform(problem, true, "C", "2"));
+    	problem_transforms.add(generateTransform(problem, true, "C", "3"));
+    	problem_transforms.add(generateTransform(problem, true, "C", "4"));
+    	problem_transforms.add(generateTransform(problem, true, "C", "5"));
+    	problem_transforms.add(generateTransform(problem, true, "C", "6"));
+    	
+    	//answer index: 0-highest scoring answer, 1-similarity score
+    	int[] answerA1 = testTransforms2x1(problem_transforms);
+    	
+    	//Bottom-up correlation
+	    problem_transforms.remove(0);
+	    problem_transforms.add(0,generateTransform(problem, false, "A", "B"));
+	    int[] answerB1 = testTransforms2x1(problem_transforms);
+	    
+	    //Pick highest scoring answer
+	    answerA1 = (answerA1[1] >= answerB1[1]) ? answerA1: answerB1;
+            
+            //********************
+    	
+//    	 //Top-down correlation
+//    	List<List<RavensTransform>> problem_transforms2 = new ArrayList<List<RavensTransform>>();
+//    	problem_transforms.add(generateTransform(problem, true, "A", "C"));
+//    	problem_transforms.add(generateTransform(problem, true, "B", "1"));
+//    	problem_transforms.add(generateTransform(problem, true, "B", "2"));
+//    	problem_transforms.add(generateTransform(problem, true, "B", "3"));
+//    	problem_transforms.add(generateTransform(problem, true, "B", "4"));
+//    	problem_transforms.add(generateTransform(problem, true, "B", "5"));
+//    	problem_transforms.add(generateTransform(problem, true, "B", "6"));
+//    	
+//    	//answer index: 0-highest scoring answer, 1-similarity score
+//    	int[] answerA2 = testTransforms2x1(problem_transforms2);
+//    	
+//    	//Bottom-up correlation
+//	    problem_transforms.remove(0);
+//	    problem_transforms.add(0,generateTransform(problem, false, "A", "B"));
+//	    int[] answerB2 = testTransforms2x1(problem_transforms);
+//	    
+//	    //Pick highest scoring answer
+//	    answerA2 = (answerA2[1] >= answerB2[1]) ? answerA2: answerB2;
+//            
+//            //********************
+    	int finalAnswer;
+        finalAnswer = answerA1[0];
+    	return Integer.toString(finalAnswer);
+    }
+    
+    public String solve3x3(RavensProblem problem) {
+    	//TODO
+    	return "1";
+    }
+    
+    public int[] testTransforms2x1(List<List<RavensTransform>> problem_transforms) {
+    	int most_similar=0, most_similar_similarity=0;
+    	
+    	List<RavensTransform> AB_transforms = problem_transforms.get(0);
+		int AB_transform_count=0;
+		for(int i=0; i < AB_transforms.size(); i++) {
+			if(AB_transforms.get(i).transform != 0) AB_transform_count++;
+		}
+		
+    	for(int i=1; i < problem_transforms.size(); i++) {
+    		int similarity=0;
+    		
+        	/*** SMART TESTER ***/
+    		/*** Apply similarity weights ***/
+    		
+    		//Same # of transforms (not counting UNCHANGED)
+    		int problem_transform_count=0;
+    		for(int k=0; k < problem_transforms.get(i).size(); k++) {
+    			if(problem_transforms.get(i).get(k).transform != 0) problem_transform_count++;
+    		}
+    		if(AB_transform_count == problem_transform_count) similarity += 2;
+    		
+    		for(int j=0; j < AB_transforms.size(); j++) {
+				List<String> checked = new ArrayList<String>();
+    			for(int k=0; k < problem_transforms.get(i).size(); k++) {
+    				if(DEBUG_LEVEL>=1)
+    					System.out.println("AB_shape/transform: " + AB_transforms.get(j).shape + "/" + AB_transforms.get(j).transform +
+    						", C shape/transform: " + problem_transforms.get(i).get(k).shape + "/" + problem_transforms.get(i).get(k).transform);
+    				
+    				//Transform matches
+    				if(problem_transforms.get(i).get(k).transform == AB_transforms.get(j).transform) {
+    					similarity++;
+    					//Larger weight for non UNCHANGED/DELETED/ADDED
+    					if(AB_transforms.get(j).transform > RavensTransform.ADDED) similarity++;
+    				}
+    				
+    				//Shape AND transform matches
+    				if(problem_transforms.get(i).get(k).shape.equals(AB_transforms.get(j).shape) &&
+    				problem_transforms.get(i).get(k).transform == AB_transforms.get(j).transform) {
+    					similarity++;
+    					//Larger weight for non UNCHANGED/DELETED/ADDED
+    					if(AB_transforms.get(j).transform > RavensTransform.ADDED) similarity++;
+    				}
+    				
+    				//Size AND transform matches
+    				if(problem_transforms.get(i).get(k).size.equals(AB_transforms.get(j).size) && !problem_transforms.get(i).get(k).size.equals("") &&
+    				problem_transforms.get(i).get(k).transform == AB_transforms.get(j).transform) {
+    					similarity++;
+    					//Larger weight for non UNCHANGED/DELETED/ADDED
+    					if(AB_transforms.get(j).transform > RavensTransform.ADDED) similarity++;
+    				}
+    				
+    				//Rotation matches
+    				if((problem_transforms.get(i).get(k).transform & RavensTransform.ROTATED) > 0 &&
+    						(AB_transforms.get(j).transform & RavensTransform.ROTATED) > 0) {
+        				if((problem_transforms.get(i).get(k).rotation == AB_transforms.get(j).rotation) && 
+        						problem_transforms.get(i).get(k).rotation != 0) similarity++;
+    				}
+    				
+    				//Fill
+    				if((problem_transforms.get(i).get(k).transform & RavensTransform.FILL_CHANGED) > 0 &&
+    						(AB_transforms.get(j).transform & RavensTransform.FILL_CHANGED) > 0) {
+    					if(DEBUG_LEVEL>=2)
+    						System.out.println("AB_shape/fill: " + AB_transforms.get(j).shape + "/" + AB_transforms.get(j).fill_transform +
+        						", C shape/fill: " + problem_transforms.get(i).get(k).shape + "/" + problem_transforms.get(i).get(k).fill_transform);
+        				for(int m=0; m<problem_transforms.get(i).get(k).fill_transform.size(); m++) {
+        					if(!checked.contains(problem_transforms.get(i).get(k).fill_transform.get(m))) {
+        						if(AB_transforms.get(j).fill_transform.contains(problem_transforms.get(i).get(k).fill_transform.get(m))) {
+        							similarity++;
+        							//Larger weight if size matches
+        							if(AB_transforms.get(j).size.equals(problem_transforms.get(i).get(k).size)) similarity++;
+        						} else similarity--;
+        					} else similarity--;
+        					checked.add(problem_transforms.get(i).get(k).fill_transform.get(m));
+        				}
+    				}
+    				
+    				if(DEBUG_LEVEL>=3) {
+	    				System.out.print("AB: ");
+	    				AB_transforms.get(j).printTransform();
+	    				System.out.print("C: ");
+	    				problem_transforms.get(i).get(k).printTransform();
+    				}
+    			}
+    		}
+    		if(similarity > most_similar_similarity) {
+    			most_similar_similarity = similarity;
+    			most_similar = i;
+    		}
+        	if(DEBUG_LEVEL>=1)
+        	System.out.println("C:" + i + " similarity = " + similarity);
+    	}
+
+    	int[] answer = new int[2];
+    	answer[0] = most_similar;
+    	answer[1] = most_similar_similarity;
+    	return answer;
+    }
+    
+    public List<RavensTransform> generateTransform(RavensProblem problem, boolean forward, String fig1, String fig2) {
+
+    	if(DEBUG_LEVEL>=1)
+    		System.out.println(fig1 + ":" + fig2);
+    	
+    	List<RavensTransform> transforms = new ArrayList<RavensTransform>();
+    	List<RavensObject> fig2_correlated = new ArrayList<RavensObject>();
+
+    	/*** SMART GENERATOR ***/
+    	if(forward) {
+	    	for (int i=0; i < problem.getFigures().get(fig1).getObjects().size(); i++) {
+	    		RavensObject obj1 = problem.getFigures().get(fig1).getObjects().get(i);
+	    		RavensObject obj2 = correlateObject(obj1, problem.getFigures().get(fig2), fig2_correlated);
+	    		if(obj2 != null) fig2_correlated.add(obj2);
+	    		transforms.add(calculateTransform(obj1, obj2));
+	    		
+	    		if(DEBUG_LEVEL>=1) {
+		    		String nm;
+		    		if(obj2 == null) {nm = "null";} else {nm = obj2.getName();}
+		    		System.out.println("Correlated objects: " + obj1.getName() + ":" + nm);
+	    		}
+	    		
+	    	}
+    	} else {
+	        for (int i=problem.getFigures().get(fig1).getObjects().size()-1; i >=0; i--) {
+	    		RavensObject obj1 = problem.getFigures().get(fig1).getObjects().get(i);
+	    		RavensObject obj2 = correlateObject(obj1, problem.getFigures().get(fig2), fig2_correlated);
+	    		if(obj2 != null) fig2_correlated.add(obj2);
+	    		transforms.add(calculateTransform(obj1, obj2));
+	    		
+	    		if(DEBUG_LEVEL>=1) {
+		    		String nm;
+		    		if(obj2 == null) {nm = "null";} else {nm = obj2.getName();}
+		    		System.out.println("Correlated objects: " + obj1.getName() + ":" + nm);
+	    		}
+	    		
+	    	}
+    	}
+    	
+    	for (int i=0; i < problem.getFigures().get(fig2).getObjects().size(); i++) {
+    		RavensObject obj2 = problem.getFigures().get(fig2).getObjects().get(i);
+    		if(!fig2_correlated.contains(obj2)) {
+    			transforms.add(calculateTransform(null,obj2));
+    			
+        		if(DEBUG_LEVEL>=1)
+        			System.out.println("Correlated objects: null:" + obj2.getName());
+        		
+    		}
+    	}
+    	if(DEBUG_LEVEL>=1)
+    		System.out.println();
+    	
+    	return transforms;
+    }
+    
+    public RavensObject correlateObject(RavensObject obj1, RavensFigure fig, List<RavensObject> already_correlated) {
+    	
+    	RavensObject correlated_obj = null;
+    	long best_correlation = 0;
+    	for (int i=0; i < fig.getObjects().size(); i++) {
+    		RavensObject obj2 = fig.getObjects().get(i);
+    		if(DEBUG_LEVEL>=2)
+    			System.out.println("obj1: " + obj1.getName() + ", obj2: " + obj2.getName());
+    		
+    		if(already_correlated.contains(obj2)) continue;
+    		
+    		long correlation = 0;
+			boolean shape_match = false;
+    		for(int j=0; j < obj1.getAttributes().size(); j++) {
+    			for(int k=0; k < obj2.getAttributes().size(); k++) {
+    		
+		    		/*** PRODUCTION RULES FOR CORRELATING OBJECTS ***/    		
+		    		//Shapes are the same
+		    		if (obj1.getAttributes().get(j).getName().equals("shape") && obj2.getAttributes().get(k).getName().equals("shape") &&
+		    				obj1.getAttributes().get(j).getValue().equals(obj2.getAttributes().get(k).getValue())) {	
+		    			correlation |= RavensTransform.CORR_SHAPE;
+		    			shape_match = true;
+		    		}
+		    		
+		    		//Check other attributes if shape matches
+		    		if(shape_match) {
+		    			
+			    		//Sizes are the same
+			    		if (obj1.getAttributes().get(j).getName().equals("size") && obj2.getAttributes().get(k).getName().equals("size") &&
+			    	    				obj1.getAttributes().get(j).getValue().equals(obj2.getAttributes().get(k).getValue())) correlation |= RavensTransform.CORR_SIZE;
+			    		
+			    		//Fills are the same
+			    		if (obj1.getAttributes().get(j).getName().equals("fill") && obj2.getAttributes().get(k).getName().equals("fill") &&
+			    	    				obj1.getAttributes().get(j).getValue().equals(obj2.getAttributes().get(k).getValue())) correlation |= RavensTransform.CORR_FILL;
+		    		}
+    			}
+    		}
+    		
+    		if(best_correlation < correlation) {
+    			best_correlation = correlation;
+    			correlated_obj = obj2;
+    		}
+
+    		if(DEBUG_LEVEL>=2)
+    			if(correlated_obj != null) System.out.println("Corr: " + obj2.getName() + ", value = " + correlation);
+    	}
+    	
+    	return correlated_obj;
+    }
+    
+    public RavensTransform calculateTransform(RavensObject obj1, RavensObject obj2) {
+    	
+    	RavensTransform rt = new RavensTransform();
+    	
+    	/*** PRODUCTION RULES FOR SPECIFYING TRANSFORMS ***/
+    	
+        rt.transform = RavensTransform.UNCHANGED;
         
-        return ret;
-    }   
+    	// Exists in figure 2, but not in figure 1
+    	if(obj1 == null) {
+    		rt.shape = obj2.getAttributes().get(0).getValue();
+    		rt.transform = RavensTransform.ADDED;
+    		return rt;
+    	}
+    	
+    	rt.shape = obj1.getAttributes().get(0).getValue();
+    	// Exists in figure 1, but not in figure 2
+    	if(obj2 == null) { 
+    		rt.transform = RavensTransform.DELETED;
+    		return rt;
+    	}
+    	
+    	String attr="";
+    	List<String> obj1AttrNames = getAttrNames(obj1);
+    	List<String> obj2AttrNames = getAttrNames(obj2);
+    	
+    	//Moved above or below
+    	attr = "above";
+    	if(!obj1AttrNames.contains(attr) && obj2AttrNames.contains(attr)) rt.transform |= RavensTransform.MOVED_ABOVE;
+    	if(obj1AttrNames.contains(attr) && !obj2AttrNames.contains(attr)) rt.transform |= RavensTransform.MOVED_BELOW;
+    	
+    	//Moved left or right of
+    	attr = "left-of";
+    	if(!obj1AttrNames.contains(attr) && obj2AttrNames.contains(attr)) rt.transform |= RavensTransform.MOVED_LEFT_OF;
+    	if(obj1AttrNames.contains(attr) && !obj2AttrNames.contains(attr)) rt.transform |= RavensTransform.MOVED_RIGHT_OF;
+    	
+    	//Moved inside or outside
+    	attr = "inside";
+    	if(!obj1AttrNames.contains(attr) && obj2AttrNames.contains(attr)) rt.transform |= RavensTransform.MOVED_INSIDE;
+    	if(obj1AttrNames.contains(attr) && !obj2AttrNames.contains(attr)) rt.transform |= RavensTransform.MOVED_OUTSIDE;
+    	
+		String obj1Shape="", obj2Shape="";
+    	for(int i=0; i < obj1.getAttributes().size(); i++) {
+    		for(int j=0; j < obj2.getAttributes().size(); j++) {
+    			if(obj1.getAttributes().get(i).getName().equals("shape")) obj1Shape = obj1.getAttributes().get(i).getValue();
+    			if(obj2.getAttributes().get(j).getName().equals("shape")) obj2Shape = obj2.getAttributes().get(j).getValue();
+    			
+    			//Fill
+    			if(obj1.getAttributes().get(i).getName().equals("fill") && obj1.getAttributes().get(i).getName().equals(obj2.getAttributes().get(j).getName())) {
+    				if(obj1.getAttributes().get(i).getValue().equals(obj2.getAttributes().get(j).getValue())) {
+    					rt.fill_transform.add("UNCHANGED");
+    				} else {
+        				rt.transform |= RavensTransform.FILL_CHANGED;
+	    				String[] obj1Fill = obj1.getAttributes().get(i).getValue().split(",");
+	    				String[] obj2Fill = obj2.getAttributes().get(j).getValue().split(",");
+	    				
+	    				for(int m=0; m < obj1Fill.length; m++) {
+	    					if(!(Arrays.asList(obj2Fill).contains(obj1Fill[m]))) rt.fill_transform.add("DEL-" + obj1Fill[m]);
+	    				}
+	    				for(int m=0; m < obj2Fill.length; m++) {
+	    					if(!(Arrays.asList(obj1Fill).contains(obj2Fill[m]))) rt.fill_transform.add("ADD-" + obj2Fill[m]);
+	    				}
+    				}
+    				if(DEBUG_LEVEL>=2) {
+	    				System.out.print("fill trans: ");
+	    				for(int m=0; m<rt.fill_transform.size(); m++) System.out.print(rt.fill_transform.get(m) + " ");
+	    				System.out.println();
+    				}
+    			}
+    			
+    			//Shrunk or expanded
+    			if(obj1.getAttributes().get(i).getName().equals("size") && obj1.getAttributes().get(i).getName().equals(obj2.getAttributes().get(j).getName())) {
+    				if((obj1.getAttributes().get(i).getValue().equals("large") && (obj2.getAttributes().get(j).getValue().equals("medium") ||
+    						obj2.getAttributes().get(j).getValue().equals("small"))) || (obj1.getAttributes().get(i).getValue().equals("medium") &&
+    						obj2.getAttributes().get(j).getValue().equals("small"))) rt.transform |= RavensTransform.SHRUNK;
+    				if((obj1.getAttributes().get(i).getValue().equals("small") && (obj2.getAttributes().get(j).getValue().equals("medium") ||
+    						obj2.getAttributes().get(j).getValue().equals("large"))) || (obj1.getAttributes().get(i).getValue().equals("medium") &&
+    						obj2.getAttributes().get(j).getValue().equals("large"))) rt.transform |= RavensTransform.EXPANDED;
+    				if(obj1.getAttributes().get(i).getValue().equals(obj2.getAttributes().get(j).getValue())) rt.size = obj1.getAttributes().get(i).getValue();
+    			}
+    			
+    			//Rotated
+    			attr = "angle";
+    			if(obj1.getAttributes().get(i).getName().equals("angle") && obj1.getAttributes().get(i).getName().equals(obj2.getAttributes().get(j).getName())) {
+    				if(!obj1.getAttributes().get(i).getValue().equals(obj2.getAttributes().get(j).getValue())) {
+    					rt.transform |= RavensTransform.ROTATED;
+    					rt.rotation = Math.abs(Integer.parseInt(obj2.getAttributes().get(j).getValue()) - Integer.parseInt(obj1.getAttributes().get(i).getValue()));
+    				}
+    			} else if(obj1.getAttributes().get(i).getName().equals("angle") && !obj2AttrNames.contains(attr)) {
+    				if(Integer.parseInt(obj1.getAttributes().get(i).getValue()) != 0) {
+    					rt.transform = rt.transform | RavensTransform.ROTATED;
+    					rt.rotation = Integer.parseInt(obj1.getAttributes().get(i).getValue());
+    				}
+    			} else if(obj2.getAttributes().get(j).getName().equals("angle") && !obj1AttrNames.contains(attr)) {
+    				if(Integer.parseInt(obj2.getAttributes().get(j).getValue()) != 0) {
+    					rt.transform = rt.transform | RavensTransform.ROTATED;
+    					rt.rotation = Integer.parseInt(obj2.getAttributes().get(j).getValue());
+    				}
+    			}
+    			
+    			//Flipped
+    			attr = "angle";
+    	    	if(obj1.getAttributes().get(i).getName().equals("angle") && obj1.getAttributes().get(i).getName().equals(obj2.getAttributes().get(j).getName())) {
+    	   			if((Integer.parseInt(obj1.getAttributes().get(i).getValue()) == 0 && Integer.parseInt(obj2.getAttributes().get(j).getValue()) == 180) ||
+    	   					(Integer.parseInt(obj1.getAttributes().get(i).getValue()) == 180 && Integer.parseInt(obj2.getAttributes().get(j).getValue()) == 0)) {
+     					rt.transform |= RavensTransform.FLIPPED_VERTICALLY;
+    	   			}
+    	   			if((Integer.parseInt(obj1.getAttributes().get(i).getValue()) == 90 && Integer.parseInt(obj2.getAttributes().get(j).getValue()) == 270) ||
+    	   					(Integer.parseInt(obj1.getAttributes().get(i).getValue()) == 270 && Integer.parseInt(obj2.getAttributes().get(j).getValue()) == 90)) {
+     					rt.transform |= RavensTransform.FLIPPED_HORIZONTALLY;
+    	   			}
+    	   			//Special case for uniform shapes
+    	   			if(obj1.getAttributes().get(i).getValue().equals(obj2.getAttributes().get(j).getValue())) {
+    	   				if(obj1Shape.equals(obj2Shape)) {
+    	   					if(obj1Shape.equals("circle") || obj1Shape.equals("square") || obj1Shape.equals("triangle")) {
+    	     					rt.transform |= RavensTransform.FLIPPED_HORIZONTALLY;
+    	     					rt.transform |= RavensTransform.ROTATED;
+    	   					}
+    	   					if(obj1Shape.equals("circle") || obj1Shape.equals("square")) {
+    	     					rt.transform |= RavensTransform.FLIPPED_VERTICALLY;
+    	     					rt.transform |= RavensTransform.ROTATED;
+    	   					}
+    	   				}
+    	   			}
+    	    	}
+
+    		}
+    	}
+    	
+    	return rt;
+    }
+    
+    public List<String> getAttrNames(RavensObject obj) {
+    	List<String> names = new ArrayList<String>();
+    	
+    	for(int i=0; i < obj.getAttributes().size(); i++) {
+    		names.add(obj.getAttributes().get(i).getName());
+    	}
+    	
+    	return names;
+    }
+    
+    public void printProblem(RavensProblem problem) {
+    	System.out.println("Type: " + problem.getProblemType() + "\n");
+    	for (String key: problem.getFigures().keySet()) {
+    		System.out.println("Figure: " + key);
+	    	for (int i=0; i < problem.getFigures().get(key).getObjects().size(); i++) {
+	    		System.out.println("  Node: " + problem.getFigures().get(key).getObjects().get(i).getName());
+	    		for (int j=0; j < problem.getFigures().get(key).getObjects().get(i).getAttributes().size(); j++) {
+	    			System.out.println("    " + problem.getFigures().get(key).getObjects().get(i).getAttributes().get(j).getName() +
+	    					": " + problem.getFigures().get(key).getObjects().get(i).getAttributes().get(j).getValue());
+	    		}
+	    	}
+	    	System.out.println();
+    	}
+    }
+    
 }
