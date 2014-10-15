@@ -59,8 +59,8 @@ public class Agent {
      */
     public String Solve(RavensProblem problem) {
     	String answer = "1";
-         String debugProblem = "2x1 Basic Problem 04";
-         if (problem.getName().equals(debugProblem)){
+         String debugProblem = "2x2 Basic Problem 06";  //**********************************************************************
+         if (problem.getName().equals(debugProblem)){   //**********************************************************************
             if(DEBUG_LEVEL>=1)
     		System.out.println();
     	
@@ -81,7 +81,7 @@ public class Agent {
 
             if(DEBUG_LEVEL>=1)
                     System.out.println();
-        } // comment out for single problem debugging
+        } // comment out for single problem debugging //**********************************************************************
     		
         return answer;
     }
@@ -513,6 +513,26 @@ public class Agent {
     	   					}
     	   				}
     	   			}
+                                //Special case for non-uniform shapes
+                                if(obj1Shape.equals(obj2Shape)) 
+                                {
+                                        if(obj1Shape.equals("right-triangle")) 
+                                        {
+                                            if(obj1.getAttributes().get(i).getValue().equals("180") && obj2.getAttributes().get(j).getValue().equals("90"))
+                                            {
+                                                rt.transform |= RavensTransform.FLIPPED_HORIZONTALLY;
+                                                rt.transform ^= RavensTransform.ROTATED;
+                                                rt.rotation = 0;
+                                            }
+                                            if(obj1.getAttributes().get(i).getValue().equals("270") && obj2.getAttributes().get(j).getValue().equals("0"))
+                                            {
+                                                rt.transform |= RavensTransform.FLIPPED_HORIZONTALLY;
+                                                rt.transform ^= RavensTransform.ROTATED;
+                                                rt.rotation = 0;
+                                            }
+                                        
+                                        }
+                                }
     	    	}
 
     		}
