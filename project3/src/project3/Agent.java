@@ -158,7 +158,7 @@ public class Agent {
     	
     	//Bottom-up correlation
 	    problem_transforms.remove(0);
-	    problem_transforms.add(0,generateTransform(problem, false, "A", "B"));
+	    problem_transforms.add(0,generateTransform(problem, false, "A", "C"));
 	    int[] answerB2 = testTransforms2x1(problem_transforms);
 	    
 	    //Pick highest scoring answer
