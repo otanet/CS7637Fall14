@@ -59,7 +59,7 @@ public class Agent {
      */
     public String Solve(RavensProblem problem) {
     	String answer = "1";
-         String debugProblem = "2x2 Basic Problem 09";  //**********************************************************************
+         String debugProblem = "2x2 Basic Problem 10";  //**********************************************************************
          if (problem.getName().equals(debugProblem)){   //**********************************************************************
             if(DEBUG_LEVEL>=1)
     		System.out.println();
@@ -194,6 +194,7 @@ public class Agent {
     	
     	List<RavensTransform> AB_transforms = problem_transforms.get(0);
 		int AB_transform_count=0;
+                //AB_transform_count = AB_transforms.size();
 		for(int i=0; i < AB_transforms.size(); i++) {
 			if(AB_transforms.get(i).transform != 0) AB_transform_count++;
 		}
