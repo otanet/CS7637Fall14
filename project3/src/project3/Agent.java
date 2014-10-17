@@ -59,7 +59,7 @@ public class Agent {
      */
     public String Solve(RavensProblem problem) {
     	String answer = "1";
-         String debugProblem = "2x2 Basic Problem 06";  //**********************************************************************
+         String debugProblem = "2x2 Basic Problem 09";  //**********************************************************************
          if (problem.getName().equals(debugProblem)){   //**********************************************************************
             if(DEBUG_LEVEL>=1)
     		System.out.println();
@@ -170,9 +170,14 @@ public class Agent {
         {
         finalAnswer = answerA1[0];
         }
+        else if (answerA1[1] >= answerA2[1])
+        {
+        finalAnswer = answerA1[0];
+        }
         else
         {
-            System.out.println("here we are");
+        finalAnswer = answerA2[0];
+        System.out.println("error: no code for this case -WLT");
         }
         System.out.println("Robbie guessed: "+finalAnswer);
         System.out.println("Correct answer: "+problem.checkAnswer(Integer.toString(finalAnswer)));

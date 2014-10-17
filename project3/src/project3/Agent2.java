@@ -452,7 +452,7 @@ public class Agent2
             HashSet obj1Attributes = new HashSet();
             for (RavensAttribute att : obj1.getAttributes()) //Find all attributes in object1
             {
-                obj1Attributes.add(att.getName());
+                //obj1Attributes.add(att.getName());
             }
 
             for (RavensObject obj2 : figure2.getObjects()) //Compare attributes rom object1 to object2
