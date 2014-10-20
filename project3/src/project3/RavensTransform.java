@@ -71,6 +71,24 @@ public class RavensTransform {
 		if((transform & RavensTransform.ROTATED) > 0) System.out.print("ROTATED ");
 		System.out.println();
 	}
+        
+        @Override
+        public boolean equals(Object other) 
+        {
+        if (!(other instanceof RavensTransform)) {
+            return false;
+        }
+
+        RavensTransform that = (RavensTransform) other;
+
+    // Custom equality check .
+    return (this.transform == that.transform)
+            //&& this.shape.equals(that.shape) - the shape is not important for the general equality
+            && this.size.equals(that.size)
+            && this.rotation==that.rotation
+            && this.fill_transform.equals(that.fill_transform);
+    
+        }
 }
 
 

@@ -59,7 +59,7 @@ public class Agent {
      */
     public String Solve(RavensProblem problem) {
     	String answer = "1";
-         String debugProblem = "2x2 Basic Problem 10";  //**********************************************************************
+         String debugProblem = "3x3 Basic Problem 01";  //**********************************************************************
          if (problem.getName().equals(debugProblem)){   //**********************************************************************
             if(DEBUG_LEVEL>=1)
     		System.out.println();
@@ -186,9 +186,110 @@ public class Agent {
     
     public String solve3x3(RavensProblem problem) {
     	//TODO
-    	return "1";
+    	//Top-down correlation
+    	List<List<RavensTransform>> problem_transforms_horz = new ArrayList<List<RavensTransform>>();
+    	problem_transforms_horz.add(generateTransform(problem, true, "A", "B")); //A  B  C
+    	problem_transforms_horz.add(generateTransform(problem, true, "B", "C")); //D  E  F
+    	problem_transforms_horz.add(generateTransform(problem, true, "D", "E")); //G  H  123456
+    	problem_transforms_horz.add(generateTransform(problem, true, "E", "F"));
+    	//problem_transforms_horz.add(generateTransform(problem, true, "G", "H"));
+    	//problem_transforms_horz.add(generateTransform(problem, true, "H", "1"));
+    	//problem_transforms_horz.add(generateTransform(problem, true, "H", "2"));
+        //problem_transforms_horz.add(generateTransform(problem, true, "H", "3"));
+        //problem_transforms_horz.add(generateTransform(problem, true, "H", "4"));
+        //problem_transforms_horz.add(generateTransform(problem, true, "H", "5"));
+        //problem_transforms_horz.add(generateTransform(problem, true, "H", "6"));
+    	
+        //what is the general horizontal transform?
+        List<RavensTransform> genTransform_horz = findGeneralTransform(problem_transforms_horz);
+        
+    	//answer index: 0-highest scoring answer, 1-similarity score
+    	int[] answerA1 = testTransforms2x1(problem_transforms_horz);
+    	
+    	//Bottom-up correlation
+	    problem_transforms_horz.remove(0);
+	    problem_transforms_horz.add(0,generateTransform(problem, false, "A", "B"));
+	    int[] answerB1 = testTransforms2x1(problem_transforms_horz);
+	    
+	    //Pick highest scoring answer
+	    answerA1 = (answerA1[1] >= answerB1[1]) ? answerA1: answerB1;
+            
+            //********************
+    	
+    	 //Top-down correlation
+    	List<List<RavensTransform>> problem_transforms_vert = new ArrayList<List<RavensTransform>>();
+    	problem_transforms_vert.add(generateTransform(problem, true, "A", "D"));//A  B  C
+    	problem_transforms_vert.add(generateTransform(problem, true, "D", "G"));//D  E  F
+    	problem_transforms_vert.add(generateTransform(problem, true, "B", "E"));//G  H  123456
+    	problem_transforms_vert.add(generateTransform(problem, true, "E", "H"));
+    	problem_transforms_vert.add(generateTransform(problem, true, "C", "F"));
+    	problem_transforms_vert.add(generateTransform(problem, true, "F", "1"));
+        problem_transforms_vert.add(generateTransform(problem, true, "F", "2"));
+        problem_transforms_vert.add(generateTransform(problem, true, "F", "3"));
+        problem_transforms_vert.add(generateTransform(problem, true, "F", "4"));
+        problem_transforms_vert.add(generateTransform(problem, true, "F", "5"));
+    	problem_transforms_vert.add(generateTransform(problem, true, "F", "6"));
+    	
+        List<RavensTransform> genTransform_vert = findGeneralTransform(problem_transforms_vert);
+        
+                
+    	//answer index: 0-highest scoring answer, 1-similarity score
+    	int[] answerA2 = testTransforms2x1(problem_transforms_vert);
+    	
+    	//Bottom-up correlation
+	    problem_transforms_vert.remove(0);
+	    problem_transforms_vert.add(0,generateTransform(problem, false, "A", "C"));
+	    int[] answerB2 = testTransforms2x1(problem_transforms_vert);
+	    
+	    //Pick highest scoring answer
+	    answerA2 = (answerA2[1] >= answerB2[1]) ? answerA2: answerB2;
+            
+            //********************
+    	int finalAnswer = 0;
+        if (answerA1[0] == answerB1[0] )
+        {
+        finalAnswer = answerA1[0];
+        }
+        else if (answerA1[1] >= answerA2[1])
+        {
+        finalAnswer = answerA1[0];
+        }
+        else
+        {
+        finalAnswer = answerA2[0];
+        System.out.println("error: no code for this case -WLT");
+        }
+        System.out.println("Robbie guessed: "+finalAnswer);
+        System.out.println("Correct answer: "+problem.checkAnswer(Integer.toString(finalAnswer)));
+    	return Integer.toString(finalAnswer);
     }
     
+    public List<RavensTransform> findGeneralTransform(List<List<RavensTransform>> problem_transforms)
+    {
+        List<RavensTransform> first_leg = problem_transforms.get(0);
+        List<RavensTransform> second_leg = problem_transforms.get(1);
+        List<RavensTransform> third_leg = problem_transforms.get(2);
+        List<RavensTransform> fourth_leg = problem_transforms.get(3);
+        List<RavensTransform> general_transform = null;
+        
+        Boolean first_leg_equal = false;
+        Boolean second_leg_equal = false;
+        if(first_leg.equals(third_leg))
+        {
+            first_leg_equal = true;
+        }
+        if(first_leg.equals(third_leg))
+        {
+            second_leg_equal = true;
+        }
+        
+        if(first_leg_equal && second_leg_equal)
+        {
+            general_transform = first_leg;
+        }
+        
+        return general_transform;
+    }
     public int[] testTransforms2x1(List<List<RavensTransform>> problem_transforms) {
     	int most_similar=0, most_similar_similarity=0;
     	
@@ -571,5 +672,6 @@ public class Agent {
 	    	System.out.println();
     	}
     }
+    
     
 }
