@@ -203,6 +203,16 @@ public class Agent {
         //what is the general horizontal transform?
         List<RavensTransform> genTransform_horz = findGeneralTransform(problem_transforms_horz);
         
+        
+        problem_transforms_horz.add(generateTransform(problem, true, "G", "H"));
+    	problem_transforms_horz.add(generateTransform(problem, true, "H", "1")); 
+    	problem_transforms_horz.add(generateTransform(problem, true, "H", "2"));
+        problem_transforms_horz.add(generateTransform(problem, true, "H", "3"));
+        problem_transforms_horz.add(generateTransform(problem, true, "H", "4"));
+        problem_transforms_horz.add(generateTransform(problem, true, "H", "5"));
+        problem_transforms_horz.add(generateTransform(problem, true, "H", "6"));
+        
+        
     	//answer index: 0-highest scoring answer, 1-similarity score
     	int[] answerA1 = testTransforms2x1(problem_transforms_horz);
     	
