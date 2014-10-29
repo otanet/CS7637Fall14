@@ -47,11 +47,9 @@ Icon
 /SethHenneman/nbproject/private/
 /SethHenneman/build/
 SethHenneman/nbproject/private/private.properties
-
 AngelinaKelly/nbproject/private/private.properties
 /project3/build
 #/project3/
-*.xml
-
-*.properties
+#*.xml
+#*.properties
 /project3/dist/
