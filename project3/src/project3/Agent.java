@@ -58,9 +58,14 @@ public class Agent {
      * @return your Agent's answer to this problem
      */
     public String Solve(RavensProblem problem) {
+        String type = problem.getProblemType();
     	String answer = "1";
-         String debugProblem = "3x3 Basic Problem 01";  //**********************************************************************
-         if (problem.getName().equals(debugProblem)){   //**********************************************************************
+        String name = problem.getName();
+        String lastTwo = name.substring(name.length()-2);
+        int foo = Integer.parseInt(lastTwo);
+        
+         String debugProblem = "3x3 Basic Problem 02";  //**********************************************************************
+         if (type.equals("3x3") && foo < 4){   //**********************************************************************
             if(DEBUG_LEVEL>=1)
     		System.out.println();
     	
@@ -68,7 +73,7 @@ public class Agent {
     		printProblem(problem);
     	
 
-            String type = problem.getProblemType();
+            
             if (type.equals("2x1")) {
                     answer = solve2x1(problem);
             } else if (type.equals("2x2")) {
@@ -187,118 +192,143 @@ public class Agent {
     public String solve3x3(RavensProblem problem) {
     	//TODO
     	//Top-down correlation
-    	List<List<RavensTransform>> problem_transforms_horz = new ArrayList<List<RavensTransform>>();
-    	problem_transforms_horz.add(generateTransform(problem, true, "A", "B")); //A  B  C
-    	problem_transforms_horz.add(generateTransform(problem, true, "B", "C")); //D  E  F
-    	problem_transforms_horz.add(generateTransform(problem, true, "D", "E")); //G  H  123456
-    	problem_transforms_horz.add(generateTransform(problem, true, "E", "F"));
-    	//problem_transforms_horz.add(generateTransform(problem, true, "G", "H"));
-    	//problem_transforms_horz.add(generateTransform(problem, true, "H", "1"));
-    	//problem_transforms_horz.add(generateTransform(problem, true, "H", "2"));
-        //problem_transforms_horz.add(generateTransform(problem, true, "H", "3"));
-        //problem_transforms_horz.add(generateTransform(problem, true, "H", "4"));
-        //problem_transforms_horz.add(generateTransform(problem, true, "H", "5"));
-        //problem_transforms_horz.add(generateTransform(problem, true, "H", "6"));
-    	
-        //what is the general horizontal transform?
-        List<RavensTransform> genTransform_horz = findGeneralTransform(problem_transforms_horz);
+    	List<List<RavensTransform>> setup_transforms_horz = new ArrayList<List<RavensTransform>>();
+        List<List<RavensTransform>> setup_transforms_vert = new ArrayList<List<RavensTransform>>();
+        List<List<RavensTransform>> soln_transforms_horz = new ArrayList<List<RavensTransform>>();
+        List<List<RavensTransform>> soln_transforms_vert = new ArrayList<List<RavensTransform>>();
         
+    	setup_transforms_horz.add(generateTransform(problem, true, "A", "B")); //A  B  C
+    	setup_transforms_horz.add(generateTransform(problem, true, "B", "C")); //D  E  F
+    	setup_transforms_horz.add(generateTransform(problem, true, "D", "E")); //G  H  123456
+    	setup_transforms_horz.add(generateTransform(problem, true, "E", "F"));
+    	setup_transforms_horz.add(generateTransform(problem, true, "G", "H"));
         
-        problem_transforms_horz.add(generateTransform(problem, true, "G", "H"));
-    	problem_transforms_horz.add(generateTransform(problem, true, "H", "1")); 
-    	problem_transforms_horz.add(generateTransform(problem, true, "H", "2"));
-        problem_transforms_horz.add(generateTransform(problem, true, "H", "3"));
-        problem_transforms_horz.add(generateTransform(problem, true, "H", "4"));
-        problem_transforms_horz.add(generateTransform(problem, true, "H", "5"));
-        problem_transforms_horz.add(generateTransform(problem, true, "H", "6"));
+        setup_transforms_vert.add(generateTransform(problem, true, "A", "D"));
+    	setup_transforms_vert.add(generateTransform(problem, true, "D", "G")); 
+    	setup_transforms_vert.add(generateTransform(problem, true, "B", "E"));
+        setup_transforms_vert.add(generateTransform(problem, true, "E", "H"));
+        setup_transforms_vert.add(generateTransform(problem, true, "C", "F"));
         
+        soln_transforms_horz.add(generateTransform(problem, true, "H", "1")); //A  B  C
+    	soln_transforms_horz.add(generateTransform(problem, true, "H", "2")); //D  E  F
+    	soln_transforms_horz.add(generateTransform(problem, true, "H", "3")); //G  H  123456
+    	soln_transforms_horz.add(generateTransform(problem, true, "H", "4"));
+    	soln_transforms_horz.add(generateTransform(problem, true, "H", "5"));
+        soln_transforms_horz.add(generateTransform(problem, true, "H", "6"));
         
+        soln_transforms_vert.add(generateTransform(problem, true, "H", "1")); //A  B  C
+    	soln_transforms_vert.add(generateTransform(problem, true, "H", "2")); //D  E  F
+    	soln_transforms_vert.add(generateTransform(problem, true, "H", "3")); //G  H  123456
+    	soln_transforms_vert.add(generateTransform(problem, true, "H", "4"));
+    	soln_transforms_vert.add(generateTransform(problem, true, "H", "5"));
+        soln_transforms_vert.add(generateTransform(problem, true, "H", "6"));
+
+        String classification = classify(setup_transforms_horz , setup_transforms_vert);
+        
+        String answer = "0";
+        
+        switch (classification)
+        {
+            case "exact_horz_vert":
+                answer = exact(setup_transforms_horz, soln_transforms_horz);
+                break;
+                
+        }
+        
+        System.out.println("Robbie guessed: "+answer);
+        System.out.println("Correct answer: "+problem.checkAnswer(answer));
+    	return answer;
+        //___________________________________________________________________________
     	//answer index: 0-highest scoring answer, 1-similarity score
-    	int[] answerA1 = testTransforms2x1(problem_transforms_horz);
+    	//int[] answerA1 = testTransforms2x1(problem_transforms_horz);
     	
     	//Bottom-up correlation
-	    problem_transforms_horz.remove(0);
-	    problem_transforms_horz.add(0,generateTransform(problem, false, "A", "B"));
-	    int[] answerB1 = testTransforms2x1(problem_transforms_horz);
-	    
-	    //Pick highest scoring answer
-	    answerA1 = (answerA1[1] >= answerB1[1]) ? answerA1: answerB1;
-            
-            //********************
+//	    problem_transforms_horz.remove(0);
+//	    problem_transforms_horz.add(0,generateTransform(problem, false, "A", "B"));
+//	    int[] answerB1 = testTransforms2x1(problem_transforms_horz);
+//	    
+//	    //Pick highest scoring answer
+//	    answerA1 = (answerA1[1] >= answerB1[1]) ? answerA1: answerB1;
+//            
+//            //********************
     	
     	 //Top-down correlation
-    	List<List<RavensTransform>> problem_transforms_vert = new ArrayList<List<RavensTransform>>();
-    	problem_transforms_vert.add(generateTransform(problem, true, "A", "D"));//A  B  C
-    	problem_transforms_vert.add(generateTransform(problem, true, "D", "G"));//D  E  F
-    	problem_transforms_vert.add(generateTransform(problem, true, "B", "E"));//G  H  123456
-    	problem_transforms_vert.add(generateTransform(problem, true, "E", "H"));
-    	problem_transforms_vert.add(generateTransform(problem, true, "C", "F"));
-    	problem_transforms_vert.add(generateTransform(problem, true, "F", "1"));
-        problem_transforms_vert.add(generateTransform(problem, true, "F", "2"));
-        problem_transforms_vert.add(generateTransform(problem, true, "F", "3"));
-        problem_transforms_vert.add(generateTransform(problem, true, "F", "4"));
-        problem_transforms_vert.add(generateTransform(problem, true, "F", "5"));
-    	problem_transforms_vert.add(generateTransform(problem, true, "F", "6"));
     	
-        List<RavensTransform> genTransform_vert = findGeneralTransform(problem_transforms_vert);
-        
-                
-    	//answer index: 0-highest scoring answer, 1-similarity score
-    	int[] answerA2 = testTransforms2x1(problem_transforms_vert);
-    	
-    	//Bottom-up correlation
-	    problem_transforms_vert.remove(0);
-	    problem_transforms_vert.add(0,generateTransform(problem, false, "A", "C"));
-	    int[] answerB2 = testTransforms2x1(problem_transforms_vert);
-	    
-	    //Pick highest scoring answer
-	    answerA2 = (answerA2[1] >= answerB2[1]) ? answerA2: answerB2;
-            
-            //********************
-    	int finalAnswer = 0;
-        if (answerA1[0] == answerB1[0] )
-        {
-        finalAnswer = answerA1[0];
-        }
-        else if (answerA1[1] >= answerA2[1])
-        {
-        finalAnswer = answerA1[0];
-        }
-        else
-        {
-        finalAnswer = answerA2[0];
-        System.out.println("error: no code for this case -WLT");
-        }
-        System.out.println("Robbie guessed: "+finalAnswer);
-        System.out.println("Correct answer: "+problem.checkAnswer(Integer.toString(finalAnswer)));
-    	return Integer.toString(finalAnswer);
+//    	problem_transforms_vert.add(generateTransform(problem, true, "A", "D"));//A  B  C
+//    	problem_transforms_vert.add(generateTransform(problem, true, "D", "G"));//D  E  F
+//    	problem_transforms_vert.add(generateTransform(problem, true, "B", "E"));//G  H  123456
+//    	problem_transforms_vert.add(generateTransform(problem, true, "E", "H"));
+//    	problem_transforms_vert.add(generateTransform(problem, true, "C", "F"));
+//    	problem_transforms_vert.add(generateTransform(problem, true, "F", "1"));
+//        problem_transforms_vert.add(generateTransform(problem, true, "F", "2"));
+//        problem_transforms_vert.add(generateTransform(problem, true, "F", "3"));
+//        problem_transforms_vert.add(generateTransform(problem, true, "F", "4"));
+//        problem_transforms_vert.add(generateTransform(problem, true, "F", "5"));
+//    	problem_transforms_vert.add(generateTransform(problem, true, "F", "6"));
+//    	
+//        //List<RavensTransform> genTransform_vert = Classify(problem_transforms_vert);
+//        
+//                
+//    	//answer index: 0-highest scoring answer, 1-similarity score
+//    	int[] answerA2 = testTransforms2x1(problem_transforms_vert);
+//    	
+//    	//Bottom-up correlation
+//	    problem_transforms_vert.remove(0);
+//	    problem_transforms_vert.add(0,generateTransform(problem, false, "A", "C"));
+//	    int[] answerB2 = testTransforms2x1(problem_transforms_vert);
+//	    
+//	    //Pick highest scoring answer
+//	    answerA2 = (answerA2[1] >= answerB2[1]) ? answerA2: answerB2;
+//            
+//            //********************
+//    	int finalAnswer = 0;
+//        if (answerA1[0] == answerB1[0] )
+//        {
+//        finalAnswer = answerA1[0];
+//        }
+//        else if (answerA1[1] >= answerA2[1])
+//        {
+//        finalAnswer = answerA1[0];
+//        }
+//        else
+//        {
+//        finalAnswer = answerA2[0];
+//        System.out.println("error: no code for this case -WLT");
+//        }
+
     }
     
-    public List<RavensTransform> findGeneralTransform(List<List<RavensTransform>> problem_transforms)
+    public String exact(List<List<RavensTransform>>setup, List<List<RavensTransform>>soln)
     {
-        List<RavensTransform> first_leg = problem_transforms.get(0);
-        List<RavensTransform> second_leg = problem_transforms.get(1);
-        List<RavensTransform> third_leg = problem_transforms.get(2);
-        List<RavensTransform> fourth_leg = problem_transforms.get(3);
-        List<RavensTransform> general_transform = null;
+        Integer answer = -1;
+        for(Integer i = 0; i< soln.size();i++)
+                {
+                    if (soln.get(i).size()==setup.get(1).size())
+                    {
+                        if (soln.get(i).get(0).fill_transform.equals(setup.get(1).get(0).fill_transform))
+                        answer = i+1;
+                    }
+                    
+                }
         
-        Boolean first_leg_equal = false;
-        Boolean second_leg_equal = false;
-        if(first_leg.equals(third_leg))
+        return answer.toString();
+    }
+    public String classify(List<List<RavensTransform>> horz, List<List<RavensTransform>> vert)
+    {
+        //Classification for exact transformations
+        String classification = "";
+        if(horz.get(0).size()==horz.get(2).size() 
+                && horz.get(0).size()==horz.get(4).size()
+                && vert.get(0).size()==vert.get(2).size()
+                && vert.get(0).size()==vert.get(4).size())
         {
-            first_leg_equal = true;
-        }
-        if(first_leg.equals(third_leg))
-        {
-            second_leg_equal = true;
+            //passing the first test for exact transforms.
+            classification = "exact_horz_vert";
+            System.out.println("help");
         }
         
-        if(first_leg_equal && second_leg_equal)
-        {
-            general_transform = first_leg;
-        }
-        
-        return general_transform;
+        //classification for general transformation
+        return classification;
     }
     public int[] testTransforms2x1(List<List<RavensTransform>> problem_transforms) {
     	int most_similar=0, most_similar_similarity=0;
