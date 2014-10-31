@@ -46,7 +46,7 @@ C
 		angle:0
 		above:W
 	X
-		shape:pac-man
+		shape:Pac-Man
 		angle:270
 		left-of:W
 	W
@@ -63,7 +63,7 @@ C
 		angle:225
 		above:X
 	X
-		shape:pac-man
+		shape:Pac-Man
 		angle:270
 	W
 		shape:circle
@@ -101,7 +101,7 @@ C
 		angle:0
 		left-of:W
 	W
-		shape:pac-man
+		shape:Pac-Man
 		angle:270
 4
 	Z
@@ -114,7 +114,7 @@ C
 		angle:180
 		above:W
 	X
-		shape:pac-man
+		shape:Pac-Man
 		angle:45
 		left-of:W
 	W
@@ -144,7 +144,7 @@ C
 		above:X
 		left-of:Y
 	Y
-		shape:pac-man
+		shape:Pac-Man
 		angle:315
 		above:W
 	X

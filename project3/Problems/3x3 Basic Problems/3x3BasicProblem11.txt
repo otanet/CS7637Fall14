@@ -172,25 +172,25 @@ H
 		above:=,[,{,},',"
 	{
 		shape:square
-		left'of:],[,=
+		left-of:],[,=
 	}
 		shape:square
-		left'of:],[,=
+		left-of:],[,=
 		above:{,=,'
 	;
 		shape:square
-		left'of:],[,=
+		left-of:],[,=
 		above:=,[,{,},',"
 	'
 		shape:square
-		left'of:;,},{,],=,[
+		left-of:;,},{,],=,[
 	"
 		shape:square
-		left'of:;,},{,],=,[
+		left-of:;,},{,],=,[
 		above:',{,=
 	<
 		shape:square
-		left'of:;,},{,],=,[
+		left-of:;,},{,],=,[
 		above:=,[,{,},',"
 6
 	>
@@ -203,23 +203,23 @@ H
 		above:>,.,/,|,`,~
 	/
 		shape:circle
-		left`of:?,.,>
+		left-of:?,.,>
 	|
 		shape:circle
-		left`of:?,.,>
+		left-of:?,.,>
 		above:/,>,`
 	\
 		shape:circle
-		left`of:?,.,>
+		left-of:?,.,>
 		above:>,.,/,|,`,~
 	`
 		shape:circle
-		left`of:\,|,/,?,>,.
+		left-of:\,|,/,?,>,.
 	~
 		shape:circle
-		left`of:\,|,/,?,>,.
+		left-of:\,|,/,?,>,.
 		above:`,/,>
 	a
 		shape:circle
-		left`of:\,|,/,?,>,.
+		left-of:\,|,/,?,>,.
 		above:>,.,/,|,`,~

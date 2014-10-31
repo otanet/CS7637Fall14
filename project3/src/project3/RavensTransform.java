@@ -44,6 +44,7 @@ public class RavensTransform {
 	public String shape;
 	public String size;
 	public int rotation;
+        public String fill;
 	public List<String> fill_transform;
 	
 	/**

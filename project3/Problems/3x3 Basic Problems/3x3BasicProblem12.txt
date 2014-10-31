@@ -190,11 +190,11 @@ H
 	;
 		shape:triangle
 		angle:0
-		left?of:{,}
+		left-of:{,}
 	'
 		shape:triangle
 		angle:0
-		left?of:{,}
+		left-of:{,}
 		above:{,;
 6
 	"
@@ -211,28 +211,28 @@ H
 	|
 		shape:triangle
 		angle:0
-		left?of:>,<,"
+		left-of:>,<,"
 	?
 		shape:triangle
 		angle:0
-		left?of:>,<,"
+		left-of:>,<,"
 		above:|,",~
 	/
 		shape:triangle
 		angle:0
-		left?of:>,<,"
+		left-of:>,<,"
 		above:",<,|,?,~,`
 	~
 		shape:triangle
 		angle:0
-		left?of:/,?,|,>,",<
+		left-of:/,?,|,>,",<
 	`
 		shape:triangle
 		angle:0
-		left?of:/,?,|,>,",<
+		left-of:/,?,|,>,",<
 		above:~,|,"
 	[
 		shape:triangle
 		angle:0
-		left?of:/,?,|,>,",<
+		left-of:/,?,|,>,",<
 		above:",<,|,?,~,`

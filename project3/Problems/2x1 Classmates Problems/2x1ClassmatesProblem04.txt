@@ -21,7 +21,7 @@ C
 		shape:triangle
 4
 	Z
-		shape:pac-man
+		shape:Pac-Man
 5
 	Z
 		shape:circle

@@ -71,6 +71,7 @@ E
 	N
 		shape:square
 		size:small
+		fill:yes
 		inside:M,O
 	O
 		shape:square

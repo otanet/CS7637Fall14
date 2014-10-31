@@ -10,7 +10,7 @@ A
 		fill:yes
 		inside:A
 B
-	c
+	C
 		shape:square
 		fill:no
 	D
@@ -22,7 +22,7 @@ C
 		shape:circle
 		fill:no
 	F
-		shape:Pac-man
+		shape:Pac-Man
 		fill:yes
 		inside:E
 		angle:270
@@ -39,7 +39,7 @@ E
 		shape:octagon
 		fill:no
 	J
-		shape:Pac-man
+		shape:Pac-Man
 		fill:yes
 		inside:I
 		angle:270
@@ -56,7 +56,7 @@ G
 		shape:square
 		fill:no
 	N
-		shape:Pac-man
+		shape:Pac-Man
 		fill:yes
 		inside:M
 		angle:270
@@ -89,7 +89,7 @@ H
 		shape:square
 		fill:no
 	V
-		shape:Pac-man
+		shape:Pac-Man
 		fill:yes
 		inside:U
 		angle:270
@@ -114,7 +114,7 @@ H
 		shape:octagon
 		fill:no
 	2
-		shape:Pac-man
+		shape:Pac-Man
 		fill:yes
 		inside:1
 		angle:270

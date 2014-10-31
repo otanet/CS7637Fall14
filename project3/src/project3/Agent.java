@@ -64,8 +64,10 @@ public class Agent {
         String lastTwo = name.substring(name.length()-2);
         int foo = Integer.parseInt(lastTwo);
         
-         String debugProblem = "3x3 Basic Problem 02";  //**********************************************************************
-         if (type.equals("3x3") && foo < 4){   //**********************************************************************
+        String debugProblem = "3x3 Basic Problem 05";  //**********************************************************************
+        if(problem.getName().equals(debugProblem))
+        //if (type.equals("3x3") && foo < 5)   //**********************************************************************
+        {    //**********************************************************************
             if(DEBUG_LEVEL>=1)
     		System.out.println();
     	
@@ -87,7 +89,9 @@ public class Agent {
             if(DEBUG_LEVEL>=1)
                     System.out.println();
         } // comment out for single problem debugging //**********************************************************************
-    		
+    	System.out.println(problem.getName());
+        System.out.println("Robbie guessed: "+ answer);
+        System.out.println("Correct answer: "+problem.checkAnswer(answer));
         return answer;
     }
     
@@ -184,8 +188,6 @@ public class Agent {
         finalAnswer = answerA2[0];
         System.out.println("error: no code for this case -WLT");
         }
-        System.out.println("Robbie guessed: "+finalAnswer);
-        System.out.println("Correct answer: "+problem.checkAnswer(Integer.toString(finalAnswer)));
     	return Integer.toString(finalAnswer);
     }
     
@@ -216,12 +218,12 @@ public class Agent {
     	soln_transforms_horz.add(generateTransform(problem, true, "H", "5"));
         soln_transforms_horz.add(generateTransform(problem, true, "H", "6"));
         
-        soln_transforms_vert.add(generateTransform(problem, true, "H", "1")); //A  B  C
-    	soln_transforms_vert.add(generateTransform(problem, true, "H", "2")); //D  E  F
-    	soln_transforms_vert.add(generateTransform(problem, true, "H", "3")); //G  H  123456
-    	soln_transforms_vert.add(generateTransform(problem, true, "H", "4"));
-    	soln_transforms_vert.add(generateTransform(problem, true, "H", "5"));
-        soln_transforms_vert.add(generateTransform(problem, true, "H", "6"));
+        soln_transforms_vert.add(generateTransform(problem, true, "F", "1")); //A  B  C
+    	soln_transforms_vert.add(generateTransform(problem, true, "F", "2")); //D  E  F
+    	soln_transforms_vert.add(generateTransform(problem, true, "F", "3")); //G  H  123456
+    	soln_transforms_vert.add(generateTransform(problem, true, "F", "4"));
+    	soln_transforms_vert.add(generateTransform(problem, true, "F", "5"));
+        soln_transforms_vert.add(generateTransform(problem, true, "F", "6"));
 
         String classification = classify(setup_transforms_horz , setup_transforms_vert);
         
@@ -230,7 +232,7 @@ public class Agent {
         switch (classification)
         {
             case "exact_horz_vert":
-                answer = exact(setup_transforms_horz, soln_transforms_horz);
+                answer = exact(setup_transforms_horz, setup_transforms_vert, soln_transforms_horz, soln_transforms_vert);
                 break;
                 
         }
@@ -298,15 +300,40 @@ public class Agent {
 
     }
     
-    public String exact(List<List<RavensTransform>>setup, List<List<RavensTransform>>soln)
+    public String exact(List<List<RavensTransform>>horzSetup, List<List<RavensTransform>>vertSetup, List<List<RavensTransform>>horzSoln, List<List<RavensTransform>>vertSoln)
     {
         Integer answer = -1;
-        for(Integer i = 0; i< soln.size();i++)
-                {
-                    if (soln.get(i).size()==setup.get(1).size())
+        ArrayList<Integer> HorzList = new ArrayList();
+        ArrayList<Integer> VertList = new ArrayList(); 
+        
+        for(Integer i = 0; i< horzSoln.size();i++)
+                {   Boolean test = true;
+                    //HORZ
+                    //setup.get(3) is the transform between E and F.
+                    if (horzSoln.get(i).size()==horzSetup.get(3).size())
                     {
-                        if (soln.get(i).get(0).fill_transform.equals(setup.get(1).get(0).fill_transform))
-                        answer = i+1;
+                        if (horzSoln.get(i).get(0).transform == horzSetup.get(3).get(0).transform
+                            && vertSoln.get(i).get(0).transform == vertSetup.get(3).get(0).transform)
+                        {
+                            for (int j = 0; j < horzSetup.get(j).size(); j++)
+                            {
+                                if (horzSoln.get(i).get(j).fill.equals(horzSetup.get(3).get(j).fill)
+                                        && vertSoln.get(i).get(j).fill.equals(vertSetup.get(3).get(j).fill))
+                                {
+                                    test = test && true;
+                                }
+                                else 
+                                {
+                                    test = test && false;
+                                }
+                               
+                            }
+                                if (test)
+                                {
+                                    answer = i+1;
+                                    HorzList.add(answer);
+                                }
+                        }
                     }
                     
                 }
@@ -444,7 +471,11 @@ public class Agent {
 	    	for (int i=0; i < problem.getFigures().get(fig1).getObjects().size(); i++) {
 	    		RavensObject obj1 = problem.getFigures().get(fig1).getObjects().get(i);
 	    		RavensObject obj2 = correlateObject(obj1, problem.getFigures().get(fig2), fig2_correlated);
-	    		if(obj2 != null) fig2_correlated.add(obj2);
+	    		if(obj2 != null) 
+                        {
+                            fig2_correlated.add(obj2);
+                        }
+                        
 	    		transforms.add(calculateTransform(obj1, obj2));
 	    		
 	    		if(DEBUG_LEVEL>=1) {
@@ -514,13 +545,18 @@ public class Agent {
 		    		if(shape_match) {
 		    			
 			    		//Sizes are the same
-			    		if (obj1.getAttributes().get(j).getName().equals("size") && obj2.getAttributes().get(k).getName().equals("size") &&
-			    	    				obj1.getAttributes().get(j).getValue().equals(obj2.getAttributes().get(k).getValue())) correlation |= RavensTransform.CORR_SIZE;
+			    		if (obj1.getAttributes().get(j).getName().equals("size") 
+                                                && obj2.getAttributes().get(k).getName().equals("size") 
+                                                && obj1.getAttributes().get(j).getValue().equals(obj2.getAttributes().get(k).getValue()))
+                                            correlation |= RavensTransform.CORR_SIZE;
 			    		
 			    		//Fills are the same
-			    		if (obj1.getAttributes().get(j).getName().equals("fill") && obj2.getAttributes().get(k).getName().equals("fill") &&
-			    	    				obj1.getAttributes().get(j).getValue().equals(obj2.getAttributes().get(k).getValue())) correlation |= RavensTransform.CORR_FILL;
+			    		if (obj1.getAttributes().get(j).getName().equals("fill") 
+                                                && obj2.getAttributes().get(k).getName().equals("fill") 
+                                                && obj1.getAttributes().get(j).getValue().equals(obj2.getAttributes().get(k).getValue())) 
+                                            correlation |= RavensTransform.CORR_FILL;
 		    		}
+                                
     			}
     		}
     		
@@ -528,6 +564,7 @@ public class Agent {
     			best_correlation = correlation;
     			correlated_obj = obj2;
     		}
+
 
     		if(DEBUG_LEVEL>=2)
     			if(correlated_obj != null) System.out.println("Corr: " + obj2.getName() + ", value = " + correlation);
@@ -548,13 +585,28 @@ public class Agent {
     	if(obj1 == null) {
     		rt.shape = obj2.getAttributes().get(0).getValue();
     		rt.transform = RavensTransform.ADDED;
+                for(int j=0; j < obj2.getAttributes().size(); j++)
+                {
+                    if(obj2.getAttributes().get(j).getName().equals("fill"))
+                    {
+                        rt.fill = obj2.getAttributes().get(j).getValue();
+                    }
+                }
     		return rt;
     	}
     	
     	rt.shape = obj1.getAttributes().get(0).getValue();
+        
     	// Exists in figure 1, but not in figure 2
     	if(obj2 == null) { 
     		rt.transform = RavensTransform.DELETED;
+                for(int j=0; j < obj1.getAttributes().size(); j++)
+                {
+                    if(obj1.getAttributes().get(j).getName().equals("fill"))
+                    {
+                        rt.fill = obj1.getAttributes().get(j).getValue();
+                    }
+                }
     		return rt;
     	}
     	
@@ -684,7 +736,7 @@ public class Agent {
 
     		}
     	}
-    	
+    	rt.fill = "-1";
     	return rt;
     }
     
