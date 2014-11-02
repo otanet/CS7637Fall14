@@ -65,9 +65,9 @@ public class Agent {
         int foo = Integer.parseInt(lastTwo);
         
         String debugProblem = "3x3 Basic Problem 05";  //**********************************************************************
-        if(problem.getName().equals(debugProblem))
-        //if (type.equals("3x3") && foo < 5)   //**********************************************************************
-        {    //**********************************************************************
+        //if(problem.getName().equals(debugProblem))
+        //if (type.equals("3x3") && foo < 6)   //**********************************************************************
+        //{    //**********************************************************************
             if(DEBUG_LEVEL>=1)
     		System.out.println();
     	
@@ -88,10 +88,17 @@ public class Agent {
 
             if(DEBUG_LEVEL>=1)
                     System.out.println();
-        } // comment out for single problem debugging //**********************************************************************
-    	System.out.println(problem.getName());
+        //} // comment out for single problem debugging //**********************************************************************
+    	if(Integer.parseInt(answer) < 1)
+        {
+            Random randomgenerator = new Random();
+            Integer random = randomgenerator.nextInt(5)+1;
+            answer = random.toString();
+        }
+        System.out.println(problem.getName());
         System.out.println("Robbie guessed: "+ answer);
         System.out.println("Correct answer: "+problem.checkAnswer(answer));
+
         return answer;
     }
     
@@ -235,71 +242,100 @@ public class Agent {
                 answer = exact(setup_transforms_horz, setup_transforms_vert, soln_transforms_horz, soln_transforms_vert);
                 break;
                 
+            case "shape_change":
+                answer = shape_change(setup_transforms_horz, setup_transforms_vert, soln_transforms_horz, soln_transforms_vert);
+                break;
+                
         }
         
-        System.out.println("Robbie guessed: "+answer);
-        System.out.println("Correct answer: "+problem.checkAnswer(answer));
     	return answer;
-        //___________________________________________________________________________
-    	//answer index: 0-highest scoring answer, 1-similarity score
-    	//int[] answerA1 = testTransforms2x1(problem_transforms_horz);
-    	
-    	//Bottom-up correlation
-//	    problem_transforms_horz.remove(0);
-//	    problem_transforms_horz.add(0,generateTransform(problem, false, "A", "B"));
-//	    int[] answerB1 = testTransforms2x1(problem_transforms_horz);
-//	    
-//	    //Pick highest scoring answer
-//	    answerA1 = (answerA1[1] >= answerB1[1]) ? answerA1: answerB1;
-//            
-//            //********************
-    	
-    	 //Top-down correlation
-    	
-//    	problem_transforms_vert.add(generateTransform(problem, true, "A", "D"));//A  B  C
-//    	problem_transforms_vert.add(generateTransform(problem, true, "D", "G"));//D  E  F
-//    	problem_transforms_vert.add(generateTransform(problem, true, "B", "E"));//G  H  123456
-//    	problem_transforms_vert.add(generateTransform(problem, true, "E", "H"));
-//    	problem_transforms_vert.add(generateTransform(problem, true, "C", "F"));
-//    	problem_transforms_vert.add(generateTransform(problem, true, "F", "1"));
-//        problem_transforms_vert.add(generateTransform(problem, true, "F", "2"));
-//        problem_transforms_vert.add(generateTransform(problem, true, "F", "3"));
-//        problem_transforms_vert.add(generateTransform(problem, true, "F", "4"));
-//        problem_transforms_vert.add(generateTransform(problem, true, "F", "5"));
-//    	problem_transforms_vert.add(generateTransform(problem, true, "F", "6"));
-//    	
-//        //List<RavensTransform> genTransform_vert = Classify(problem_transforms_vert);
-//        
-//                
-//    	//answer index: 0-highest scoring answer, 1-similarity score
-//    	int[] answerA2 = testTransforms2x1(problem_transforms_vert);
-//    	
-//    	//Bottom-up correlation
-//	    problem_transforms_vert.remove(0);
-//	    problem_transforms_vert.add(0,generateTransform(problem, false, "A", "C"));
-//	    int[] answerB2 = testTransforms2x1(problem_transforms_vert);
-//	    
-//	    //Pick highest scoring answer
-//	    answerA2 = (answerA2[1] >= answerB2[1]) ? answerA2: answerB2;
-//            
-//            //********************
-//    	int finalAnswer = 0;
-//        if (answerA1[0] == answerB1[0] )
-//        {
-//        finalAnswer = answerA1[0];
-//        }
-//        else if (answerA1[1] >= answerA2[1])
-//        {
-//        finalAnswer = answerA1[0];
-//        }
-//        else
-//        {
-//        finalAnswer = answerA2[0];
-//        System.out.println("error: no code for this case -WLT");
-//        }
 
     }
     
+        public String shape_change(List<List<RavensTransform>>horzSetup, List<List<RavensTransform>>vertSetup, List<List<RavensTransform>>horzSoln, List<List<RavensTransform>>vertSoln)
+    {
+        Integer answer = -1;
+        Boolean change = true;
+        ArrayList<Integer> horzList = new ArrayList();
+        ArrayList<Integer> vertList = new ArrayList();
+        
+        for(int i = 0; i<horzSoln.size();i++)
+        {
+            change = true;
+            for (int j=0; j < (horzSoln.get(j).size()/2); j++)
+            {
+                if(horzSoln.get(i).size() % 2 ==1 )
+                {
+                    change = false;
+                    continue;
+                }
+                {   //the first one needs to be Deleted.
+                    if (horzSoln.get(i).get(j).transform != RavensTransform.DELETED)
+                    {
+                        change = change && false;
+                    }
+                    if (horzSoln.get(i).get(j).transform != RavensTransform.DELETED)
+                    {
+                        change = change && false;
+                    }
+                //the first one needs to be Added.
+
+                } 
+            }
+            if (change == true)
+            horzList.add(i);
+        }
+        
+        for(int i = 0; i<vertSoln.size();i++)
+        {
+            change = true;
+            for (int j=0; j < (vertSoln.get(j).size()/2); j++)
+            {
+                if(vertSoln.get(i).size() % 2 ==1 )
+                {
+                    change = false;
+                    continue;
+                }
+                {   //the first one needs to be Deleted.
+                    if (vertSoln.get(i).get(j).transform != RavensTransform.DELETED)
+                    {
+                        change = change && false;
+                    }
+                    if (vertSoln.get(i).get(j).transform != RavensTransform.DELETED)
+                    {
+                        change = change && false;
+                    }
+                //the first one needs to be Added.
+
+                } 
+            }
+            if (change == true)
+            vertList.add(i);
+        }
+        
+        ArrayList<Integer> possibleList = new ArrayList();
+        for(int i=0; i<horzList.size(); i++)
+            for(int j=0; j<vertList.size(); j++)
+                if (horzList.get(i)==vertList.get(j))
+                        {
+                            possibleList.add(horzList.get(i));
+                        }
+        String firstShape = horzSetup.get(4).get(1).shape;
+        for (int i=0; i<possibleList.size();i++)
+        {
+            String testShape = horzSoln.get(possibleList.get(i)).get(3).shape;
+            if (firstShape.equals(testShape))
+            {
+                possibleList.remove(i);
+            }
+            if (possibleList.size() == 1)
+                break;
+        }
+        
+        answer = possibleList.get(0) + 1;
+        return answer.toString(); 
+    }
+        
     public String exact(List<List<RavensTransform>>horzSetup, List<List<RavensTransform>>vertSetup, List<List<RavensTransform>>horzSoln, List<List<RavensTransform>>vertSoln)
     {
         Integer answer = -1;
@@ -342,17 +378,37 @@ public class Agent {
     }
     public String classify(List<List<RavensTransform>> horz, List<List<RavensTransform>> vert)
     {
-        //Classification for exact transformations
+        //Classification for horizontal and vertical transformations
         String classification = "";
-        if(horz.get(0).size()==horz.get(2).size() 
-                && horz.get(0).size()==horz.get(4).size()
+        // the sizes of the transforms need to be the same (
+        if(horz.get(0).size()==horz.get(2).size()               //A 0 B 1 C
+                //                                              //D 2 E 3 F
+                && horz.get(2).size()==horz.get(4).size()       //G 4 H
                 && vert.get(0).size()==vert.get(2).size()
-                && vert.get(0).size()==vert.get(4).size())
+                && vert.get(2).size()==vert.get(4).size()
+                //but there can' be more than 3 transforms in each one.
+                && horz.get(0).size() < 4
+                && vert.get(0).size() <4 )
         {
             //passing the first test for exact transforms.
             classification = "exact_horz_vert";
-            System.out.println("help");
         }
+                
+        //check to see if this is a shape changing problem
+        else if(horz.get(0).get(0).transform == horz.get(0).get(1).transform
+            && horz.get(0).get(0).transform == RavensTransform.DELETED
+            && horz.get(0).size() > 3)
+        {
+            classification = "shape_change";
+        }
+        
+        
+                        
+                        
+
+                                                // A 0 B 1 C
+        //if(horz.get(0).size())
+        
         
         //classification for general transformation
         return classification;
