@@ -64,7 +64,7 @@ public class Agent {
         String lastTwo = name.substring(name.length()-2);
         int foo = Integer.parseInt(lastTwo);
         
-        String debugProblem = "3x3 Basic Problem 05";  //**********************************************************************
+        String debugProblem = "3x3 Basic Problem 13";  //**********************************************************************
         //if(problem.getName().equals(debugProblem))
         //if (type.equals("3x3") && foo < 6)   //**********************************************************************
         //{    //**********************************************************************
@@ -245,6 +245,32 @@ public class Agent {
             case "shape_change":
                 answer = shape_change(setup_transforms_horz, setup_transforms_vert, soln_transforms_horz, soln_transforms_vert);
                 break;
+              
+            case "single_shape_added": 
+                answer = shape_added(setup_transforms_horz, setup_transforms_vert, soln_transforms_horz, soln_transforms_vert);
+                break;
+                
+            case "size_increase":
+                answer = size_increase(setup_transforms_horz, setup_transforms_vert, soln_transforms_horz, soln_transforms_vert);
+                break;
+                
+            case "double_increase":
+                answer = double_increase(setup_transforms_horz, setup_transforms_vert, soln_transforms_horz, soln_transforms_vert);
+                break;
+                
+            case "shape_removed":
+                answer = shape_removed(setup_transforms_horz, setup_transforms_vert, soln_transforms_horz, soln_transforms_vert);
+                break;
+                
+            case "shape_added_changed":
+                answer = shape_added_changed(setup_transforms_horz, setup_transforms_vert, soln_transforms_horz, soln_transforms_vert);
+                break;
+                
+            default: 
+                Random randomgenerator = new Random();
+                Integer random = randomgenerator.nextInt(5)+1;
+                answer = random.toString();
+                break;
                 
         }
         
@@ -252,6 +278,108 @@ public class Agent {
 
     }
     
+    public String shape_added_changed(List<List<RavensTransform>>horzSetup, 
+            List<List<RavensTransform>>vertSetup, 
+            List<List<RavensTransform>>horzSoln, 
+            List<List<RavensTransform>>vertSoln)
+    {
+        Integer answer = 3;
+        for(int i=0; i < horzSoln.size(); i++)
+        {
+            if((horzSoln.get(i).size()-horzSetup.get(4).size())==6
+                    && (vertSoln.get(i).size()-vertSetup.get(4).size())==3)
+            {
+                answer = i + 1;
+            }
+        }
+        return answer.toString();
+    }
+    
+    public String shape_removed(List<List<RavensTransform>>horzSetup, 
+            List<List<RavensTransform>>vertSetup, 
+            List<List<RavensTransform>>horzSoln, 
+            List<List<RavensTransform>>vertSoln)
+    {
+        Integer answer = 0;
+        for(int i=0; i<horzSoln.size();i++)
+        {
+            if((horzSoln.get(i).size()==1 && horzSoln.get(i).get(0).transform==1))
+            {
+                answer = i + 1;
+            }
+        }
+        return answer.toString();
+    }
+    
+    public String double_increase(List<List<RavensTransform>>horzSetup, 
+            List<List<RavensTransform>>vertSetup, 
+            List<List<RavensTransform>>horzSoln, 
+            List<List<RavensTransform>>vertSoln)
+    {
+        ArrayList<Integer> horzList = new ArrayList();
+        ArrayList<Integer> vertList = new ArrayList();
+        ArrayList<Integer> removeList = new ArrayList();
+        
+        Integer answer = 0;
+        for(int i=0; i<horzSoln.size();i++)
+        {
+            if(horzSoln.get(i).size() - horzSetup.get(4).size()==3)
+            {
+                answer = i;
+                horzList.add(i);
+            }
+        }
+        if (horzList.size() >1)
+        {
+            for(int i=0; i<horzList.size();i++)
+            {
+                int rotation1 = horzSetup.get(0).get(0).rotation;
+                int rotation2 = horzSetup.get(1).get(0).rotation;
+                
+                if(horzSoln.get(horzList.get(i)).get(0).rotation != rotation2)
+                {
+                    removeList.add(i);
+                }
+            }
+            for(int i=0; i<removeList.size();i++)
+            {
+                horzList.remove(removeList.get(i));
+            }
+        }
+                
+        answer = horzList.get(0)+1;
+        return answer.toString();
+    }
+    
+    public String size_increase(List<List<RavensTransform>>horzSetup, 
+            List<List<RavensTransform>>vertSetup, 
+            List<List<RavensTransform>>horzSoln, 
+            List<List<RavensTransform>>vertSoln)
+    {
+        Integer answer = 0;
+        for(int i=0; i<horzSoln.size();i++)
+        {
+            if(horzSoln.get(i).get(0).transform == 8)
+            {
+                answer = i + 1;
+            }
+        }
+        return answer.toString();
+    }
+    
+    public String shape_added(List<List<RavensTransform>>horzSetup, List<List<RavensTransform>>vertSetup, List<List<RavensTransform>>horzSoln, List<List<RavensTransform>>vertSoln)
+    {
+        Integer answer = 3;
+        for(int i=0; i < horzSoln.size(); i++)
+        {
+            if((horzSoln.get(i).size()-horzSetup.get(4).size())==1
+                    && (vertSoln.get(i).size()-vertSetup.get(4).size())==1)
+            {
+                answer = i + 1;
+            }
+        }
+        return answer.toString();
+    }
         public String shape_change(List<List<RavensTransform>>horzSetup, List<List<RavensTransform>>vertSetup, List<List<RavensTransform>>horzSoln, List<List<RavensTransform>>vertSoln)
     {
         Integer answer = -1;
@@ -353,29 +481,52 @@ public class Agent {
                         {
                             for (int j = 0; j < horzSetup.get(j).size(); j++)
                             {
-                                if (horzSoln.get(i).get(j).fill.equals(horzSetup.get(3).get(j).fill)
-                                        && vertSoln.get(i).get(j).fill.equals(vertSetup.get(3).get(j).fill))
-                                {
-                                    test = test && true;
-                                }
-                                else 
-                                {
-                                    test = test && false;
-                                }
+                                if(horzSetup.size()<3)
+                                    continue;
+                                    if (horzSoln.get(i).get(j).fill.equals(horzSetup.get(3).get(j).fill)
+                                            && vertSoln.get(i).get(j).fill.equals(vertSetup.get(3).get(j).fill))
+                                    {
+                                        test = test && true;
+                                    }
+                                    else 
+                                    {
+                                        test = test && false;
+                                    }
                                
                             }
                                 if (test)
                                 {
-                                    answer = i+1;
+                                    answer = i;
                                     HorzList.add(answer);
                                 }
                         }
                     }
-                    
                 }
-        
+        if (HorzList.size()>1)
+        {
+            for (int i=0; i<HorzList.size();i++)
+            {
+                List<RavensTransform> testSoln = vertSoln.get(HorzList.get(i));
+                if(testSoln.size()!=vertSetup.get(1).size())
+                {
+                    HorzList.remove(i);
+                }
+                if(horzSetup.get(0).get(0).rotation == horzSetup.get(1).get(0).rotation
+                        && horzSetup.get(2).get(0).rotation == horzSetup.get(3).get(0).rotation
+                        && horzSoln.get(HorzList.get(i)).get(0).rotation == horzSetup.get(2).get(0).rotation
+                        )
+                {
+                    HorzList.set(0,HorzList.get(i));
+                }
+            }
+        }
+        else if(HorzList.size()==0)
+            HorzList.add(3);
+
+        answer = HorzList.get(0)+1;
         return answer.toString();
     }
+
     public String classify(List<List<RavensTransform>> horz, List<List<RavensTransform>> vert)
     {
         //Classification for horizontal and vertical transformations
@@ -388,26 +539,60 @@ public class Agent {
                 && vert.get(2).size()==vert.get(4).size()
                 //but there can' be more than 3 transforms in each one.
                 && horz.get(0).size() < 4
-                && vert.get(0).size() <4 )
+                && vert.get(0).size() <4 
+                && horz.get(1).get(0).transform != 8
+                && horz.get(2).get(0).transform != 8
+                && horz.get(3).get(0).transform != 8)
         {
             //passing the first test for exact transforms.
             classification = "exact_horz_vert";
         }
                 
         //check to see if this is a shape changing problem
-        else if(horz.get(0).get(0).transform == horz.get(0).get(1).transform
-            && horz.get(0).get(0).transform == RavensTransform.DELETED
-            && horz.get(0).size() > 3)
+        else if(horz.get(0).size()>1
+                && horz.get(0).get(0).transform == horz.get(0).get(1).transform
+                && horz.get(0).get(0).transform == RavensTransform.DELETED
+                && horz.get(0).size() > 3)
         {
             classification = "shape_change";
         }
+        else if(horz.get(2).size()-horz.get(0).size()==1
+                && horz.get(3).size()-horz.get(1).size()==1)
+        {
+            classification = "single_shape_added";
+        }
         
+        else if(horz.get(1).get(0).transform == 8
+                && horz.get(2).get(0).transform == 8
+                && horz.get(3).get(0).transform == 8
+                && horz.get(4).get(0).transform == 8)
+        {
+            classification = "size_increase";
+        }
         
-                        
-                        
-
-                                                // A 0 B 1 C
-        //if(horz.get(0).size())
+        else if((horz.get(1).size() - horz.get(0).size())==1
+                && horz.get(3).size() - horz.get(2).size()==2)
+        {
+            classification = "double_increase";
+        }
+        
+        else if((horz.get(1).size() - horz.get(0).size())==2
+                && horz.get(3).size() - horz.get(2).size()==4)
+        {
+            classification = "shape_added_changed";
+        }
+        
+        else if((horz.get(1).size() - horz.get(0).size())==1
+                && horz.get(3).size() - horz.get(2).size()==2)
+        {
+            classification = "double_increase";
+        }
+        
+        else if((horz.get(0).size() - horz.get(1).size())==1
+                && horz.get(2).size() - horz.get(3).size()==1)
+        {
+            classification = "shape_removed";
+        }
         
         
         //classification for general transformation
@@ -647,6 +832,10 @@ public class Agent {
                     {
                         rt.fill = obj2.getAttributes().get(j).getValue();
                     }
+                    else
+                    {
+                        rt.fill = "-1";
+                    }
                 }
     		return rt;
     	}
@@ -661,6 +850,10 @@ public class Agent {
                     if(obj1.getAttributes().get(j).getName().equals("fill"))
                     {
                         rt.fill = obj1.getAttributes().get(j).getValue();
+                    }
+                    else
+                    {
+                        rt.fill = "-1";
                     }
                 }
     		return rt;
@@ -715,14 +908,42 @@ public class Agent {
     			}
     			
     			//Shrunk or expanded
-    			if(obj1.getAttributes().get(i).getName().equals("size") && obj1.getAttributes().get(i).getName().equals(obj2.getAttributes().get(j).getName())) {
-    				if((obj1.getAttributes().get(i).getValue().equals("large") && (obj2.getAttributes().get(j).getValue().equals("medium") ||
-    						obj2.getAttributes().get(j).getValue().equals("small"))) || (obj1.getAttributes().get(i).getValue().equals("medium") &&
-    						obj2.getAttributes().get(j).getValue().equals("small"))) rt.transform |= RavensTransform.SHRUNK;
-    				if((obj1.getAttributes().get(i).getValue().equals("small") && (obj2.getAttributes().get(j).getValue().equals("medium") ||
-    						obj2.getAttributes().get(j).getValue().equals("large"))) || (obj1.getAttributes().get(i).getValue().equals("medium") &&
-    						obj2.getAttributes().get(j).getValue().equals("large"))) rt.transform |= RavensTransform.EXPANDED;
-    				if(obj1.getAttributes().get(i).getValue().equals(obj2.getAttributes().get(j).getValue())) rt.size = obj1.getAttributes().get(i).getValue();
+    			if(obj1.getAttributes().get(i).getName().equals("size") && obj1.getAttributes().get(i).getName().equals(obj2.getAttributes().get(j).getName())) 
+                        {
+    				if((obj1.getAttributes().get(i).getValue().equals("large") 
+                                        &&    (obj2.getAttributes().get(j).getValue().equals("medium") 
+                                            || obj2.getAttributes().get(j).getValue().equals("small") 
+                                            || obj2.getAttributes().get(j).getValue().equals("very-small") ) )
+                                        
+                                        
+                                        || (obj1.getAttributes().get(i).getValue().equals("medium") 
+                                            &&    ((obj2.getAttributes().get(j).getValue().equals("small")) 
+                                                ||  obj2.getAttributes().get(j).getValue().equals("very-small")) ) 
+                                        
+                                        || (obj1.getAttributes().get(i).getValue().equals("very-large") 
+                                            &&    ((obj2.getAttributes().get(j).getValue().equals("large")) 
+                                                ||  obj2.getAttributes().get(j).getValue().equals("medium"))
+                                                ||  obj2.getAttributes().get(j).getValue().equals("very-small"))) 
+                                    
+                                    rt.transform |= RavensTransform.SHRUNK;
+    				
+                                if(
+                                        (obj1.getAttributes().get(i).getValue().equals("small") 
+                                        && (obj2.getAttributes().get(j).getValue().equals("medium") 
+                                            || obj2.getAttributes().get(j).getValue().equals("large"))
+                                            || obj2.getAttributes().get(j).getValue().equals("very-large"))
+                                        
+                                     || (obj1.getAttributes().get(i).getValue().equals("medium") 
+                                        && (obj2.getAttributes().get(j).getValue().equals("large")
+                                            || obj2.getAttributes().get(j).getValue().equals("very-large")))
+                                        
+                                     || (obj1.getAttributes().get(i).getValue().equals("large") 
+                                        && obj2.getAttributes().get(j).getValue().equals("very-large"))
+                                        ) 
+                                    
+                                    rt.transform |= RavensTransform.EXPANDED;
+    				if(obj1.getAttributes().get(i).getValue().equals(obj2.getAttributes().get(j).getValue())) 
+                                    rt.size = obj1.getAttributes().get(i).getValue();
     			}
     			
     			//Rotated
